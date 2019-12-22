@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="com.h2database:h2:1.4.185" level="project" />
+    <orderEntry type="library" name="org.apache.httpcomponents:httpclient:4.3-alpha1" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-text:1.8" level="project" />
   </component>
 </module>

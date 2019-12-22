@@ -13,13 +13,13 @@ import java.net.URLConnection;
 
 public abstract class Booru {
 
-    private URL url;
+    protected URL url;
 
     public Booru(String url) throws MalformedURLException {
         this.url = new URL(url);
     }
 
-    public abstract JsonObject postShow(String id);
+    public abstract JsonObject postShow(String id) throws IOException;
 
     public Post getPost(String id) throws IOException {
         return getPost(id, true);
