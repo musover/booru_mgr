@@ -38,7 +38,7 @@ public abstract class Booru {
         if(mimetype.equals("image/jpeg")){
             extension = "jpg";
         } else {
-            extension = mimetype.replace(".*/","");
+            extension = mimetype.replaceAll(".*/","");
         }
         Image img;
         try(BufferedInputStream bis = new BufferedInputStream(ir.getInputStream())) {

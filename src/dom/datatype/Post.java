@@ -2,6 +2,7 @@ package dom.datatype;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,9 @@ public class Post implements Serializable {
     private Rating rating;
     private String parent;
 
-    public Post(){ }
+    public Post(){
+        tags = new HashMap<>();
+    }
 
     public Post(String id, Image image, Rating rating) {
         this.id = id;
