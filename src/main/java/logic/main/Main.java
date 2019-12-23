@@ -21,11 +21,10 @@ public class Main {
 
         Post p = d.getPost(ids.get(2));
 
-        Danbooru2 meobooru = new Danbooru2("http://192.168.122.190:3000","musover", "yuvMymzqQGUWCRrFyit7J924");
         List<NameValuePair> nvpList = new ArrayList<>();
         nvpList.add(new BasicNameValuePair("upload[rating]",String.valueOf(p.getRating().toString().toLowerCase().charAt(0))));
         nvpList.add(new BasicNameValuePair("upload[tag_string]", p.getTagstring()));
-        String s = Danbooru2Requests.postCreate("http://192.168.122.190:3000",
+        String s = Danbooru2Requests.postCreate("http://fuckshit:3000",
                 "Basic "+ Base64.getUrlEncoder().encodeToString(("musover:yuvMymzqQGUWCRrFyit7J924").getBytes()),
                 p.getImage(),nvpList.toArray(NameValuePair[]::new));
 

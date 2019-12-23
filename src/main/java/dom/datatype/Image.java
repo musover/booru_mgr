@@ -21,7 +21,7 @@ public class Image implements Serializable {
     }
 
     public void setFile(byte[] file) throws IOException {
-        path = Files.createTempFile(id.toString(),".tmp");
+        path = Files.createTempFile(id,".tmp");
         path.toFile().deleteOnExit();
         Files.write(path, file);
     }

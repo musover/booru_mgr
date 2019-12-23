@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dom.datatype.Image;
-import org.apache.http.HttpClientConnection;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.EntityBuilder;
@@ -22,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.rmi.UnexpectedException;
 import java.util.Arrays;
 
 /**
@@ -118,27 +116,28 @@ public class Danbooru2Requests {
      */
     public static String postCreate(String baseURL, String auth, Image img, NameValuePair ...param) throws IOException {
         URL requestURL = buildURL(baseURL, "/uploads.json");
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+
         HttpPost r = new HttpPost(requestURL.toString());
         r.addHeader("Authorization",auth);
         MultipartEntityBuilder b = MultipartEntityBuilder.create();
         for(NameValuePair p : param) {
             b.addTextBody(p.getName(), p.getValue());
         }
-
         if(img != null)
             b.addBinaryBody("upload[file]",img.getFile(),ContentType.create(img.getMimetype()),img.getPseudofilename());
 
         HttpEntity multipart = b.build();
         r.setEntity(multipart);
 
-        CloseableHttpResponse resp = httpClient.execute(r);
+        JsonObject o;
+        try(CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse resp = httpClient.execute(r)){
 
-        Gson g = new Gson();
-        JsonObject o = g.fromJson(new InputStreamReader(resp.getEntity().getContent()), JsonObject.class);
+            Gson g = new Gson();
+            o = g.fromJson(new InputStreamReader(resp.getEntity().getContent()), JsonObject.class);
 
-        resp.close();
-        httpClient.close();
+        }
+
         if(o.get("post_id") instanceof JsonNull)
             throw new IOException(o.get("backtrace").getAsString());
 
@@ -151,6 +150,7 @@ public class Danbooru2Requests {
 
         try(CloseableHttpClient c = HttpClients.createDefault()){
             HttpPut r = new HttpPut(requestURL.toString());
+            r.addHeader("Authorization",auth);
             EntityBuilder b = EntityBuilder.create();
             b.setParameters(param);
 
