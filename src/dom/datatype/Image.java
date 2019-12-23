@@ -1,24 +1,27 @@
 package dom.datatype;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 
 public class Image implements Serializable {
 
-    private byte[] file;
+    private Path path;
+    private UUID id = UUID.randomUUID();
     private String extension;
 
     public Image(){}
-    public Image(byte[] file, String extension){
-        this.file = file;
-        this.extension = extension;
+
+    public byte[] getFile() throws IOException{
+        return Files.readAllBytes(path);
     }
 
-    public byte[] getFile() {
-        return file;
-    }
-
-    public void setFile(byte[] file) {
-        this.file = file;
+    public void setFile(byte[] file) throws IOException {
+        path = Files.createTempFile(id.toString(),".tmp");
+        path.toFile().deleteOnExit();
+        Files.write(path, file);
     }
 
     public String getExtension() {

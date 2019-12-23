@@ -1,5 +1,6 @@
 package dom.datatype;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -145,7 +146,7 @@ public class Post implements Serializable {
         rating = r;
     }
 
-    public byte[] getImageFile(){
+    public byte[] getImageFile() throws IOException {
         return image.getFile();
     }
 

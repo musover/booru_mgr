@@ -5,7 +5,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dom.datatype.Artist;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,14 +16,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Danbooru2 extends Booru {
 
-    private String username;
-    private String apiKey;
+    private String basicAuth;
 
     public Danbooru2(String url) throws MalformedURLException {
         super(url);
@@ -29,8 +28,7 @@ public class Danbooru2 extends Booru {
 
     public Danbooru2(String url, String username, String apiKey) throws MalformedURLException {
         super(url);
-        this.username = username;
-        this.apiKey = apiKey;
+        this.basicAuth = "Basic "+ Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
     }
 
     @Override
@@ -47,35 +45,20 @@ public class Danbooru2 extends Booru {
 
         return post;
     }
-    
-    private JsonArray artistList(Map<String, String> param) throws IOException{
-        URL requestURL;
-        JsonArray a;
-        try {
-            URIBuilder u = new URIBuilder(this.url.toString() + "/artists.json");
-            for(String k: param.keySet()){
-                u.addParameter(k, param.get(k));
-            }
-            requestURL = u.build().toURL();
-        } catch(URISyntaxException e){
-            throw new MalformedURLException(e.getReason());
-        }
 
-        URLConnection r = requestURL.openConnection();
-        r.setDoInput(true);
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(r.getInputStream()))){
-            Gson g = new Gson();
-            a = g.fromJson(br, JsonArray.class);
-        }
-
-        return a;
-    }
-
+    /**
+     *
+     * @param name Name of the artist (supposedly unique)
+     * @return An Artist object with the first result of the query
+     * @throws IOException Any exception thrown by Danbooru2.artistList()
+     */
     public Artist artistGet(String name) throws IOException {
-        JsonObject a = artistList(Map.of("search[name]", name)).get(0).getAsJsonObject();
+        BasicNameValuePair param = new BasicNameValuePair("search[name]", name);
+        JsonObject a = Danbooru2Requests.listArtists(this.url.toString(), param).get(0).getAsJsonObject();
         Artist out;
         List<String> urls = new ArrayList<>();
         StringBuilder otherNames = new StringBuilder();
+
         for(JsonElement i : a.get("urls").getAsJsonArray()){
             urls.add(i.getAsJsonObject().get("url").getAsString());
         }
@@ -87,5 +70,27 @@ public class Danbooru2 extends Booru {
         out.setOtherNames(otherNames.toString());
 
         return out;
+    }
+
+
+
+    public List<String> postListIds(Map<String, String> nvp) throws IOException {
+        List<NameValuePair> paramList = new ArrayList<>();
+        for(String k : nvp.keySet()){
+            paramList.add(new BasicNameValuePair(k, nvp.get(k)));
+        }
+        NameValuePair[] paramArray = paramList.toArray(NameValuePair[]::new);
+        JsonArray a;
+        List<String> result = new ArrayList<>();
+        if(nvp.get("tags").split(" ").length > 2)
+            a = Danbooru2Requests.postList(this.url.toString(), this.basicAuth, paramArray);
+        else
+            a = Danbooru2Requests.postList(this.url.toString(), paramArray);
+
+        for(JsonElement i : a){
+            result.add(i.getAsJsonObject().get("id").getAsString());
+        }
+
+        return result;
     }
 }

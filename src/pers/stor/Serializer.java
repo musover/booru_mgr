@@ -4,21 +4,25 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dom.datatype.Post;
+import logic.main.Configuration;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Serializer {
 
-    //TODO: Config file affecting these variables
-    private static String WORKDIR = "/tmp/";
-
     public static void save(Post p) throws IOException{
-        Path path = Paths.get(WORKDIR+p.getPseudofilename()+".json");
+        Path path = Paths.get(Configuration.WORKDIR+p.getPseudofilename()+".json");
         save(p, path);
     }
 
@@ -33,11 +37,22 @@ public class Serializer {
 
         Files.writeString(path, o);
     }
+
     public static Post load(Path p) throws IOException{
         Gson g = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class, new ByteArrayTypeAdapter()).create();
         String s = Files.readString(p);
 
         return g.fromJson(s, Post.class);
+    }
+
+    public static List<Post> loadAll(Path p) throws IOException{
+        List<Post> posts = new ArrayList<>();
+        if(p.toFile().isDirectory())
+            for(File f : Objects.requireNonNull(p.toFile().listFiles(file -> (file != null && file.getName().endsWith(".json"))))){
+                posts.add(load(f.toPath()));
+            }
+
+        return posts;
     }
 
 }
