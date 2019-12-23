@@ -38,7 +38,7 @@ public class Post implements Serializable {
         boolean isGeneral = key.toLowerCase().equals("general");
         List<String> taglist = getTagList(key);
         for (String s : taglist) {
-            tagstr.append((raw) ? key + ":" : "").append(s).append(" ");
+            tagstr.append((raw && !isGeneral) ? key + ":" : "").append(s).append(" ");
         }
 
         return tagstr.toString();
