@@ -8,11 +8,13 @@ import java.util.UUID;
 
 public class Image implements Serializable {
 
-    private Path path;
+    private transient Path path;
     private UUID id = UUID.randomUUID();
     private String extension;
 
-    public Image(){}
+    public Image(){
+        // bean constructor
+    }
 
     public byte[] getFile() throws IOException{
         return Files.readAllBytes(path);

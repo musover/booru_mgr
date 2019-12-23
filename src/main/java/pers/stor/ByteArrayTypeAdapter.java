@@ -11,7 +11,7 @@ import java.util.Base64;
  */
 public class ByteArrayTypeAdapter implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
     @Override
-    public byte[] deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public byte[] deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) {
         return Base64.getUrlDecoder().decode(jsonElement.getAsString());
     }
 

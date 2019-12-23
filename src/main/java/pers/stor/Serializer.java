@@ -2,15 +2,11 @@ package pers.stor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import dom.datatype.Post;
 import logic.main.Configuration;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +18,7 @@ import java.util.Objects;
 public class Serializer {
 
     public static void save(Post p) throws IOException{
-        Path path = Paths.get(Configuration.WORKDIR+p.getPseudofilename()+".json");
+        Path path = Paths.get(Configuration.workdir +p.getPseudofilename()+".json");
         save(p, path);
     }
 
@@ -32,7 +28,7 @@ public class Serializer {
         try {
             Files.createFile(path);
         } catch(FileAlreadyExistsException ignore){
-
+            //ignore
         }
 
         Files.writeString(path, o);

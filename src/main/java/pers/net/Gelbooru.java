@@ -86,15 +86,16 @@ public class Gelbooru extends Booru {
                 default:
                     key = "tag_string_"+type;
             }
-            if(!key.isEmpty()) {
-                if(attempt.get(key)==null)
-                    attempt.put(key, new StringBuilder());
-                attempt.get(key).append(tagName).append(" ");
-            }
+                attempt.computeIfAbsent(key, k -> {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(tagName).append(" ");
+
+                    return sb;
+                });
         }
 
-        for(String k : attempt.keySet()){
-            o.addProperty(k, attempt.get(k).toString());
+        for(Map.Entry<String, StringBuilder> k : attempt.entrySet()){
+            o.addProperty(k.getKey(), k.getValue().toString());
         }
 
     }

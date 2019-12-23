@@ -4,17 +4,7 @@ import java.sql.*;
 
 public class H2TagManager implements TagManager {
 
-    private static String url;
-    static{
-        try {
-            Class.forName("org.h2.Driver");
-            url = "jdbc:h2:~/.gdpv4"; // default URL
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            // disable tagmanager
-        }
-
-    }
+    private static String url = "jdbc:h2:~/.gdpv4";
 
     public void insertTag(String tagName, String tagType) throws SQLException {
         String sql = "MERGE INTO tags KEY (NAME) VALUES(?,?)";

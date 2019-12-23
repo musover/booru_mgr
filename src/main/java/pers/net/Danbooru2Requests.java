@@ -19,6 +19,8 @@ import java.util.Arrays;
  */
 public class Danbooru2Requests {
 
+    private Danbooru2Requests(){}
+
     static URL buildURL(String baseURL, String endpoint, NameValuePair ...param) throws IOException {
         URL requestURL;
         try {

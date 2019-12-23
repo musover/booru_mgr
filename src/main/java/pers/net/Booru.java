@@ -51,13 +51,15 @@ public abstract class Booru {
 
         switch(post.get("rating").getAsString().toLowerCase()){
             case "safe":
-                result.setRating(Rating.Safe);
+                result.setRating(Rating.SAFE);
                 break;
             case "questionable":
-                result.setRating(Rating.Questionable);
+                result.setRating(Rating.QUESTIONABLE);
                 break;
             case "explicit":
-                result.setRating(Rating.Explicit);
+                result.setRating(Rating.EXPLICIT);
+                break;
+            default:
                 break;
         }
 

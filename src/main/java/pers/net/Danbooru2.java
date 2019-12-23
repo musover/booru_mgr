@@ -74,8 +74,8 @@ public class Danbooru2 extends Booru {
 
     public List<String> postListIds(Map<String, String> nvp) throws IOException {
         List<NameValuePair> paramList = new ArrayList<>();
-        for(String k : nvp.keySet()){
-            paramList.add(new BasicNameValuePair(k, nvp.get(k)));
+        for(Map.Entry<String, String> e: nvp.entrySet()){
+            paramList.add(new BasicNameValuePair(e.getKey(), e.getValue()));
         }
         NameValuePair[] paramArray = paramList.toArray(NameValuePair[]::new);
         JsonArray a;
