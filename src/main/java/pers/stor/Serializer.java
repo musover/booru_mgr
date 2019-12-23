@@ -21,7 +21,7 @@ public class Serializer {
     }
 
     public static void save(Post p) throws IOException{
-        Path path = Paths.get(Configuration.WORKDIR +p.getPseudofilename()+".json");
+        Path path = Paths.get(Configuration.WORKDIR +p.getId()+".json");
         save(p, path);
     }
 

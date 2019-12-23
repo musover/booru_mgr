@@ -2,16 +2,27 @@ package pers.net;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import dom.datatype.Image;
+import org.apache.http.HttpClientConnection;
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
+import java.rmi.UnexpectedException;
 import java.util.Arrays;
 
 /**
@@ -75,14 +86,14 @@ public class Danbooru2Requests {
     }
 
     /**
-     * Performs a query with one or more possible parameters
+     * Performs a query with one or more possible parameters, with no possibility for HTTP-Basic auth.
      * @param param limit: posts per page (max 200)
      *              page: page to look up
      *              tags: tags to search for
      *              md5: hash of the post's image
      *              random: random order
      *              raw: no idea of what it does
-     * @return
+     * @return A JsonArray with the result of the query.
      */
     public static JsonArray postList(String baseURL, NameValuePair ...param) throws IOException{
         return postList(baseURL, "", param);
@@ -91,6 +102,60 @@ public class Danbooru2Requests {
     public static JsonArray postList(String baseURL, String auth, NameValuePair ...param) throws IOException {
         URL requestURL = buildURL(baseURL, "/posts.json", param);
         return getJsonElements(requestURL, auth);
+    }
+
+    /**
+     * Issues a POST request to upload a post.
+     * @param baseURL Danbooru2 object's url
+     * @param auth Danbooru2 object's basicAuth
+     * @param img Image, which will get uploaded as a multipart form
+     * @param param upload[source] - Should not be used if upload[file] is not null
+     *              upload[rating] - s|q|e (REQUIRED)
+     *              upload[parent_id]
+     *              upload[tag_string] REQUIRED
+     * @return The ID of the newly created post
+     * @throws IOException
+     */
+    public static String postCreate(String baseURL, String auth, Image img, NameValuePair ...param) throws IOException {
+        URL requestURL = buildURL(baseURL, "/uploads.json");
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost r = new HttpPost(requestURL.toString());
+        r.addHeader("Authorization",auth);
+        MultipartEntityBuilder b = MultipartEntityBuilder.create();
+        for(NameValuePair p : param) {
+            b.addTextBody(p.getName(), p.getValue());
+        }
+
+        if(img != null)
+            b.addBinaryBody("upload[file]",img.getFile(),ContentType.create(img.getMimetype()),img.getPseudofilename());
+
+        HttpEntity multipart = b.build();
+        r.setEntity(multipart);
+
+        CloseableHttpResponse resp = httpClient.execute(r);
+
+        Gson g = new Gson();
+        JsonObject o = g.fromJson(new InputStreamReader(resp.getEntity().getContent()), JsonObject.class);
+
+        resp.close();
+        httpClient.close();
+        if(o.get("post_id") instanceof JsonNull)
+            throw new IOException(o.get("backtrace").getAsString());
+
+        return o.get("post_id").getAsString();
+
+    }
+
+    public static void postUpdate(String baseURL, String auth, String id, NameValuePair ...param) throws IOException{
+        URL requestURL = buildURL(baseURL, "/posts/"+id+".json");
+
+        try(CloseableHttpClient c = HttpClients.createDefault()){
+            HttpPut r = new HttpPut(requestURL.toString());
+            EntityBuilder b = EntityBuilder.create();
+            b.setParameters(param);
+
+            c.execute(r);
+        }
     }
 
 

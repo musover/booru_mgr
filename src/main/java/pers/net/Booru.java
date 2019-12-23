@@ -34,29 +34,25 @@ public abstract class Booru {
         URLConnection ir = fileURL.openConnection();
         ir.setDoInput(true);
         String mimetype = ir.getContentType();
-        String extension;
-        if(mimetype.equals("image/jpeg")){
-            extension = "jpg";
-        } else {
-            extension = mimetype.replaceAll(".*/","");
-        }
+
         Image img;
         try(BufferedInputStream bis = new BufferedInputStream(ir.getInputStream())) {
             img = new Image();
+            img.setId(fullPostID);
             img.setFile(bis.readAllBytes());
-            img.setExtension(extension);
+            img.setMimetype(mimetype);
         }
 
         Post result = new Post();
 
         switch(post.get("rating").getAsString().toLowerCase()){
-            case "safe":
+            case "s":
                 result.setRating(Rating.SAFE);
                 break;
-            case "questionable":
+            case "q":
                 result.setRating(Rating.QUESTIONABLE);
                 break;
-            case "explicit":
+            case "e":
                 result.setRating(Rating.EXPLICIT);
                 break;
             default:

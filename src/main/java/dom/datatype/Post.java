@@ -146,18 +146,6 @@ public class Post implements Serializable {
         rating = r;
     }
 
-    public byte[] getImageFile() throws IOException {
-        return image.getFile();
-    }
-
-    public String getImageExtension(){
-        return image.getExtension();
-    }
-
-    public String getPseudofilename(){
-        return id+"."+getImageExtension();
-    }
-
     public String getParent(){
         return parent;
     }

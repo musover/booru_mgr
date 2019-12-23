@@ -9,8 +9,8 @@ import java.util.UUID;
 public class Image implements Serializable {
 
     private transient Path path;
-    private UUID id = UUID.randomUUID();
-    private String extension;
+    private String id = UUID.randomUUID().toString();
+    private String mimetype;
 
     public Image(){
         // bean constructor
@@ -26,11 +26,31 @@ public class Image implements Serializable {
         Files.write(path, file);
     }
 
-    public String getExtension() {
-        return extension;
+    public String getId() {
+        return id;
     }
 
-    public void setExtension(String extension) {
-        this.extension = extension;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMimetype() {
+        return mimetype;
+    }
+
+    public void setMimetype(String mimetype) {
+        this.mimetype = mimetype;
+    }
+
+    public String getPseudofilename(){
+        StringBuilder sb = new StringBuilder(id);
+        sb.append(".");
+        if(getMimetype().equals("image/jpeg")){
+            sb.append("jpg");
+        } else {
+            sb.append(getMimetype().replaceAll(".*/",""));
+        }
+
+        return sb.toString();
     }
 }
