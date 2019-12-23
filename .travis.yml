@@ -1,0 +1,14 @@
+language: java
+
+addons:
+  sonarcloud:
+    organization: "maelask3-github"
+    token:
+      secure: "eIERC5fvblH3oeGTwFeil1SB48fQ8KzW6hpsHoT7TbWHuMv2SsA/b417/xyKKdHwLKLrO51u+7xe1YlUJiIXBrIWdI0SVYUdjsSj9zJ2YUreFGTpcqUB5rVu3O0Pk8BBWpAtJMtbImiVZdlKYizmHskE/jpBLoELL/O9akHPj2rtULPqQsJEjZr6MyYZyxShW3srk7we921X3vSr/ZBNgKbfAWtmmdMzFjjjN88GuCaO2SQWmLcglJPnuBmfV8HYihPTd0ozsjlV9hz9Aadw+V2rxnccDZ/9rc1nm5CUbBd0d2ylEN9rbGKqAno/qUAX4l+BgR8ASIZlMi765JIy65G2L8I6BtTsMLTiATDgeogMTGay1BrtqZNQekDK6AaNFu6jKh5Yd55U1juvTsGhX+0PKm0v1DGPGDnQQoWcyh8/cOHR2Pe8QPnuaC8dgCa05dv0pH6QdsTPuqSfbFYA/Sb1y0sK9pEtKxTnDH+lH96vMvmdgFttQ0aFxjKxWBhKKkQy70e3wopTPlIUTt2I2fmBHyKUMg3r1/Q9qe62NFD/oaeIGKbGHbAarL1w5hdBhEVU25MGpyGdtB6nZLcodIW8qkmmS8m35nhUHo4hL7FLYJnr80hQBx2wxpUQM9+7rCi6FOaUL9rsigzVhZTUhwKI6ii+ZVoR3RGGkBTAe4M="
+
+jdk:
+  - oraclejdk11
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=maelask3_booru_mgr
