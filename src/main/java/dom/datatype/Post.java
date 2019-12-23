@@ -36,7 +36,7 @@ public class Post implements Serializable {
 
     private String getTagstring(String key, boolean raw) {
         StringBuilder tagstr = new StringBuilder((raw) ? " " : "");
-        boolean isGeneral = key.equalsIgnoreCase(TagType.general);
+        boolean isGeneral = key.equalsIgnoreCase(TagType.GENERAL);
         List<String> taglist = getTagList(key);
         for (String s : taglist) {
             tagstr.append((raw && !isGeneral) ? key + ":" : "").append(s).append(" ");
@@ -83,15 +83,15 @@ public class Post implements Serializable {
     }
 
     public String getArtists(boolean raw){
-        return getTagstring(TagType.artist, raw);
+        return getTagstring(TagType.ARTIST, raw);
     }
 
     public void setArtists(String tag){
-        setTags(TagType.artist,tag);
+        setTags(TagType.ARTIST,tag);
     }
 
     public List<String> getArtistList(){
-        return tags.get(TagType.artist);
+        return tags.get(TagType.ARTIST);
     }
 
     public String getCopyright(){
@@ -99,11 +99,11 @@ public class Post implements Serializable {
     }
 
     public String getCopyright(boolean raw){
-        return getTagstring(TagType.copyright, raw);
+        return getTagstring(TagType.COPYRIGHT, raw);
     }
 
     public void setCopyright(String tag){
-        setTags(TagType.copyright, tag);
+        setTags(TagType.COPYRIGHT, tag);
     }
 
     public String getCharacters(){
@@ -111,11 +111,11 @@ public class Post implements Serializable {
     }
 
     public String getCharacters(boolean raw){
-        return getTagstring(TagType.character, raw);
+        return getTagstring(TagType.CHARACTER, raw);
     }
 
     public void setCharacters(String tag){
-        setTags(TagType.character, tag);
+        setTags(TagType.CHARACTER, tag);
     }
 
     public String getMeta(){
@@ -123,19 +123,19 @@ public class Post implements Serializable {
     }
 
     public String getMeta(boolean raw){
-        return getTagstring(TagType.meta, raw);
+        return getTagstring(TagType.META, raw);
     }
 
     public void setMeta(String tag){
-        setTags(TagType.meta, tag);
+        setTags(TagType.META, tag);
     }
 
     public String getGeneral(){
-        return getTagstring(TagType.general, false);
+        return getTagstring(TagType.GENERAL, false);
     }
 
     public void setGeneral(String tag){
-        setTags(TagType.general, tag);
+        setTags(TagType.GENERAL, tag);
     }
 
     public Rating getRating(){

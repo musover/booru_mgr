@@ -17,8 +17,11 @@ import java.util.Objects;
 
 public class Serializer {
 
+    private Serializer(){
+    }
+
     public static void save(Post p) throws IOException{
-        Path path = Paths.get(Configuration.workdir +p.getPseudofilename()+".json");
+        Path path = Paths.get(Configuration.WORKDIR +p.getPseudofilename()+".json");
         save(p, path);
     }
 
