@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="GDPv4" target="1.5" />
+      <module name="GDPv4" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
