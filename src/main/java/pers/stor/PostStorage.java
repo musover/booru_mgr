@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Serializer {
+public class PostStorage {
 
-    private Serializer(){
+    private PostStorage(){
     }
 
     public static void save(Post p) throws IOException{

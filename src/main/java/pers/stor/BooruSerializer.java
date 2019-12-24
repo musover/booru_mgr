@@ -2,7 +2,6 @@ package pers.stor;
 
 import com.google.gson.*;
 import pers.net.Booru;
-import pers.net.Danbooru2;
 import pers.net.IUploadable;
 
 import java.lang.reflect.Type;
