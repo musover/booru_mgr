@@ -1,22 +1,19 @@
 package logic.main;
 
-
 import dom.datatype.Post;
+import pers.net.Danbooru2;
 import pers.stor.Configuration;
-import pers.stor.Serializer;
 
+import javax.naming.NoPermissionException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        Configuration.load();
+    public static void main(String[] args) throws IOException, NoPermissionException {
+        Danbooru2 safebooru = (Danbooru2) Configuration.getBoards().stream().filter(b -> b.getUrl().getHost().contains("safebooru")).findFirst().get();
 
-        List<Post> postList = Serializer.loadAll(Paths.get(Configuration.getWorkdir()));
-        for(Post p: postList){
-            Files.write(Paths.get(Configuration.getWorkdir(), p.getImage().getPseudofilename()), p.getImage().getFile());
-        }
+        Post p = safebooru.getPost("3726590");
+
+        Configuration.getUploadDestination().postCreate(p);
+
     }
 }

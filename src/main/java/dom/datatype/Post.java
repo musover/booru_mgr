@@ -13,7 +13,7 @@ public class Post implements Serializable {
     private Map<String, List<String>> tags;
     private String source;
     private Rating rating;
-    private String parent;
+    private String parent = "";
 
     public Post(){
         tags = new HashMap<>();

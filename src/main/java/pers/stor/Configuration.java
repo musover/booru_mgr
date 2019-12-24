@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.Charsets;
 import pers.net.Booru;
-import pers.net.Uploadable;
+import pers.net.IUploadable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class Configuration {
     private static List<Booru> boards = new ArrayList<>();
     private static Booru artistSource = null;
     private static boolean artistLookupEnabled = false;
-    private static Uploadable uploadDestination = null;
+    private static IUploadable uploadDestination = null;
 
     public static String getDbVendor() {
         return dbVendor;
@@ -61,11 +61,11 @@ public class Configuration {
             artistLookupEnabled = true;
     }
 
-    public static Uploadable getUploadDestination() {
+    public static IUploadable getUploadDestination() {
         return uploadDestination;
     }
 
-    public static void setUploadDestination(Uploadable uploadDestination) {
+    public static void setUploadDestination(IUploadable uploadDestination) {
         Configuration.uploadDestination = uploadDestination;
     }
 
@@ -90,10 +90,17 @@ public class Configuration {
     static {
         try {
             load();
-        } catch (IOException e) {
-            if(!(e instanceof FileNotFoundException))
+        } catch(FileNotFoundException e) {
+            try {
+                save();
+            } catch(IOException ex){
                 Logger.getLogger(Configuration.class.getCanonicalName())
-                    .log(Level.SEVERE, "Could not load configuration. Saving defaults.", e);
+                        .log(Level.SEVERE,"Could not save default config. Bailing out.", ex);
+                System.exit(420);
+            }
+        } catch (IOException e) {
+            Logger.getLogger(Configuration.class.getCanonicalName())
+                .log(Level.SEVERE, "Could not load configuration. Saving defaults.", e);
 
             try {
                 save();
@@ -164,7 +171,7 @@ public class Configuration {
             if(b.getUrl().toString().equals(artistSourceUrl))
                 setArtistSource(b);
             if(b.getUrl().toString().equals(uploadDestinationUrl))
-                setUploadDestination((Uploadable) b);
+                setUploadDestination((IUploadable) b);
         }
 
 

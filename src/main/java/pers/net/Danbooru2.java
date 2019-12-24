@@ -9,6 +9,7 @@ import dom.datatype.Post;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import javax.naming.NoPermissionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,9 +18,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class Danbooru2 extends Booru implements Uploadable {
+public class Danbooru2 extends Booru implements IUploadable {
 
-    private transient String basicAuth;
+    private transient String basicAuth = "";
     private String username;
     private String apiKey;
 
@@ -33,6 +34,7 @@ public class Danbooru2 extends Booru implements Uploadable {
 
     public void setUsername(String username) {
         this.username = username;
+        updateBasicAuth();
     }
 
     public String getApiKey() {
@@ -41,13 +43,17 @@ public class Danbooru2 extends Booru implements Uploadable {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+        updateBasicAuth();
+    }
+
+    public void updateBasicAuth(){
+        this.basicAuth = "Basic "+ Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
     }
 
     public Danbooru2(String url, String username, String apiKey) throws MalformedURLException {
         super(url);
         this.username = username;
         this.apiKey = apiKey;
-        this.basicAuth = "Basic "+ Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
     }
 
     @Override
@@ -93,7 +99,7 @@ public class Danbooru2 extends Booru implements Uploadable {
 
 
 
-    public List<String> postListIds(Map<String, String> nvp) throws IOException {
+    public List<String> postListIds(Map<String, String> nvp) throws IOException, NoPermissionException {
         List<NameValuePair> paramList = new ArrayList<>();
         for(Map.Entry<String, String> e: nvp.entrySet()){
             paramList.add(new BasicNameValuePair(e.getKey(), e.getValue()));
@@ -101,9 +107,11 @@ public class Danbooru2 extends Booru implements Uploadable {
         NameValuePair[] paramArray = paramList.toArray(NameValuePair[]::new);
         JsonArray a;
         List<String> result = new ArrayList<>();
-        if(nvp.get("tags").split(" ").length > 2)
+        if(nvp.get("tags").split(" ").length > 2) {
+            if(basicAuth == null || this.basicAuth.isEmpty())
+                throw new NoPermissionException("You are not authenticated.");
             a = Danbooru2Requests.postList(this.url.toString(), this.basicAuth, paramArray);
-        else
+        } else
             a = Danbooru2Requests.postList(this.url.toString(), paramArray);
 
         for(JsonElement i : a){
@@ -114,7 +122,26 @@ public class Danbooru2 extends Booru implements Uploadable {
     }
 
     @Override
-    public void postCreate(Post p) {
+    public void postCreate(Post p) throws IOException, NoPermissionException {
+        List<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("upload[rating]", String.valueOf(p.getRating().toString().toLowerCase().charAt(0))));
+        param.add(new BasicNameValuePair("upload[tag_string]", p.getTagstring()));
+        if(!p.getParent().isEmpty())
+            param.add(new BasicNameValuePair("upload[parent_id]", p.getParent()));
 
+        if(basicAuth == null || this.basicAuth.isEmpty())
+            throw new NoPermissionException("You are not authenticated.");
+
+        String newPost = Danbooru2Requests.postCreate(
+                this.url.toString(),
+                this.basicAuth,
+                p.getImage(),
+                param.toArray(NameValuePair[]::new));
+
+        Danbooru2Requests.postUpdate(
+                this.url.toString(),
+                this.basicAuth,
+                newPost,
+                new BasicNameValuePair("post[source]", p.getSource()));
     }
 }

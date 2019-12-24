@@ -114,7 +114,7 @@ public class Danbooru2Requests {
      *              upload[parent_id]
      *              upload[tag_string] REQUIRED
      * @return The ID of the newly created post
-     * @throws IOException
+     * @throws IOException .
      */
     public static String postCreate(String baseURL, String auth, Image img, NameValuePair ...param) throws IOException {
         URL requestURL = buildURL(baseURL, "/uploads.json");
@@ -147,6 +147,17 @@ public class Danbooru2Requests {
 
     }
 
+    /**
+     * Issues a PUT request to update a post.
+     * @param baseURL Danbooru2 object's url
+     * @param auth Danbooru2 object's basicAuth
+     * @param id ID of the post
+     * @param param post[source] - Should not be used if upload[file] is not null
+     *              post[rating] - s|q|e (REQUIRED)
+     *              post[parent_id]
+     *              post[tag_string] REQUIRED
+     * @throws IOException .
+     */
     public static void postUpdate(String baseURL, String auth, String id, NameValuePair ...param) throws IOException{
         URL requestURL = buildURL(baseURL, "/posts/"+id+".json");
 
@@ -156,6 +167,8 @@ public class Danbooru2Requests {
             EntityBuilder b = EntityBuilder.create();
             b.setParameters(param);
 
+            HttpEntity e = b.build();
+            r.setEntity(e);
             c.execute(r);
         }
     }
