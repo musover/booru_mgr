@@ -12,7 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public abstract class Booru implements Serializable {
+public abstract class Booru implements Serializable, IBooru {
 
     protected URL url;
     public URL getUrl() {
@@ -70,13 +70,19 @@ public abstract class Booru implements Serializable {
 
         result.setImage(img);
         result.setId(fullPostID);
-        result.setArtists(post.get("tag_string_artist").getAsString());
-        result.setCopyright(post.get("tag_string_copyright").getAsString());
-        result.setCharacters(post.get("tag_string_character").getAsString());
+        if(post.get("tag_string_artist") != null)
+            result.setArtists(post.get("tag_string_artist").getAsString());
+        if(post.get("tag_string_copyright") != null)
+            result.setCopyright(post.get("tag_string_copyright").getAsString());
+        if(post.get("tag_string_character") != null)
+            result.setCharacters(post.get("tag_string_character").getAsString());
+        if(post.get("tag_string_general") != null)
         result.setGeneral(post.get("tag_string_general").getAsString());
-        result.setMeta(post.get("tag_string_meta").getAsString());
+        if(post.get("tag_string_meta") != null)
+            result.setMeta(post.get("tag_string_meta").getAsString());
         result.setSource(post.get("source").getAsString());
 
         return result;
     }
+
 }

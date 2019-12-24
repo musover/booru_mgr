@@ -3,8 +3,8 @@ package pers.stor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dom.datatype.Post;
-import logic.main.Configuration;
 
+import dom.datatype.Image;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -21,12 +21,15 @@ public class Serializer {
     }
 
     public static void save(Post p) throws IOException{
-        Path path = Paths.get(Configuration.getWorkdir() +p.getId()+".json");
+        Path path = Paths.get(Configuration.getWorkdir(),p.getId()+".json");
         save(p, path);
     }
 
     public static void save(Post p, Path path) throws IOException {
-        Gson g = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class, new ByteArrayTypeAdapter()).create();
+        Gson g = new GsonBuilder()
+                .registerTypeHierarchyAdapter(byte[].class, new ByteArrayTypeAdapter())
+                .registerTypeHierarchyAdapter(Image.class, new ImageSerializer())
+                .create();
         String o = g.toJson(p);
         try {
             Files.createFile(path);
@@ -38,7 +41,10 @@ public class Serializer {
     }
 
     public static Post load(Path p) throws IOException{
-        Gson g = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class, new ByteArrayTypeAdapter()).create();
+        Gson g = new GsonBuilder()
+                .registerTypeHierarchyAdapter(byte[].class, new ByteArrayTypeAdapter())
+                .registerTypeHierarchyAdapter(Image.class, new ImageSerializer())
+                .create();
         String s = Files.readString(p);
 
         return g.fromJson(s, Post.class);
@@ -47,7 +53,7 @@ public class Serializer {
     public static List<Post> loadAll(Path p) throws IOException{
         List<Post> posts = new ArrayList<>();
         if(p.toFile().isDirectory())
-            for(File f : Objects.requireNonNull(p.toFile().listFiles(file -> (file != null && file.getName().endsWith(".json"))))){
+            for(File f : Objects.requireNonNull(p.toFile().listFiles(file -> (file != null && file.getName().endsWith(".json") && !file.getName().contains("config"))))){
                 posts.add(load(f.toPath()));
             }
 

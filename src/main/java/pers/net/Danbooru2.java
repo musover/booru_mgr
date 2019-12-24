@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dom.datatype.Artist;
+import dom.datatype.Post;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -16,7 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class Danbooru2 extends Booru {
+public class Danbooru2 extends Booru implements Uploadable {
 
     private transient String basicAuth;
     private String username;
@@ -110,5 +111,10 @@ public class Danbooru2 extends Booru {
         }
 
         return result;
+    }
+
+    @Override
+    public void postCreate(Post p) {
+
     }
 }

@@ -3,7 +3,7 @@ package pers.net;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import logic.main.Configuration;
+import pers.stor.Configuration;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.client.utils.URIBuilder;
 import pers.db.H2TagManager;
@@ -29,6 +29,11 @@ public class Gelbooru extends Booru {
         switch(Configuration.getDbVendor().toLowerCase()){
             case "h2":
                 tm = new H2TagManager();
+                try{
+                    tm.createTable();
+                } catch(SQLException e){
+                    tmEnabled = false;
+                }
                 break;
             case "postgres":
                 // tm = new PostgresTagManager(); //(NYI)
@@ -97,13 +102,19 @@ public class Gelbooru extends Booru {
                     break;
                 default:
                     key = "tag_string_"+type;
+                    break;
             }
-                attempt.computeIfAbsent(key, k -> {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(tagName).append(" ");
+            if(!key.isEmpty()) {
+                if(!attempt.containsKey(key))
+                    attempt.computeIfAbsent(key, k -> {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(tagName).append(" ");
 
-                    return sb;
-                });
+                        return sb;
+                     });
+                else
+                    attempt.get(key).append(tagName).append(" ");
+            }
         }
 
         for(Map.Entry<String, StringBuilder> k : attempt.entrySet()){
@@ -121,7 +132,10 @@ public class Gelbooru extends Booru {
                 type = tagShow(tagName).get("type").getAsString();
                 tm.insertTag(tagName, type);
             }
-        } catch(SQLException|IOException e){
+        } catch(SQLException e){
+            tmEnabled = false;
+            type = "";
+        } catch(IOException e){
             type = "";
         }
 
