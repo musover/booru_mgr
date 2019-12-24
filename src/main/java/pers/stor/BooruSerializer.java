@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 
 public class BooruSerializer implements JsonSerializer<Booru>, JsonDeserializer<Booru> {
     @Override
-    public Booru deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public Booru deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) {
         JsonObject o = jsonElement.getAsJsonObject();
         String className = o.get("class").getAsString();
         Booru b;

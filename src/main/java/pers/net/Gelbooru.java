@@ -43,6 +43,10 @@ public class Gelbooru extends Booru {
                 break;
         }
     }
+
+    public static synchronized void disableTm(){
+        tmEnabled = false;
+    }
     public Gelbooru(String url) throws MalformedURLException {
         super(url);
     }
@@ -133,7 +137,7 @@ public class Gelbooru extends Booru {
                 tm.insertTag(tagName, type);
             }
         } catch(SQLException e){
-            tmEnabled = false;
+            disableTm();
             type = "";
         } catch(IOException e){
             type = "";

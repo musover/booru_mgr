@@ -4,16 +4,17 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.Charsets;
 import pers.net.Booru;
-import pers.net.Danbooru2;
-import pers.net.Gelbooru;
 import pers.net.Uploadable;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Configuration {
 
@@ -90,11 +91,15 @@ public class Configuration {
         try {
             load();
         } catch (IOException e) {
-            e.printStackTrace();
+            if(!(e instanceof FileNotFoundException))
+                Logger.getLogger(Configuration.class.getCanonicalName())
+                    .log(Level.SEVERE, "Could not load configuration. Saving defaults.", e);
+
             try {
                 save();
             } catch(IOException ex){
-                e.printStackTrace();
+                Logger.getLogger(Configuration.class.getCanonicalName())
+                        .log(Level.SEVERE,"Could not save default config. Bailing out.", e);
                 System.exit(420);
             }
         }

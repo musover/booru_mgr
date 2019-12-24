@@ -20,7 +20,7 @@ public class BooruListSerializer implements JsonSerializer<List<Booru>>, JsonDes
     }
 
     @Override
-    public List<Booru> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public List<Booru> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) {
         JsonArray a = (JsonArray) jsonElement;
         List<Booru> booruList = new ArrayList<>();
         BooruSerializer bs = new BooruSerializer();

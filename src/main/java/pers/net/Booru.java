@@ -27,8 +27,6 @@ public abstract class Booru implements Serializable, IBooru {
         this.url = new URL(url);
     }
 
-    public abstract JsonObject postShow(String id) throws IOException;
-
     public Post getPost(String id) throws IOException {
         return getPost(id, true);
     }
@@ -70,6 +68,7 @@ public abstract class Booru implements Serializable, IBooru {
 
         result.setImage(img);
         result.setId(fullPostID);
+
         if(post.get("tag_string_artist") != null)
             result.setArtists(post.get("tag_string_artist").getAsString());
         if(post.get("tag_string_copyright") != null)
@@ -77,9 +76,10 @@ public abstract class Booru implements Serializable, IBooru {
         if(post.get("tag_string_character") != null)
             result.setCharacters(post.get("tag_string_character").getAsString());
         if(post.get("tag_string_general") != null)
-        result.setGeneral(post.get("tag_string_general").getAsString());
+            result.setGeneral(post.get("tag_string_general").getAsString());
         if(post.get("tag_string_meta") != null)
             result.setMeta(post.get("tag_string_meta").getAsString());
+
         result.setSource(post.get("source").getAsString());
 
         return result;

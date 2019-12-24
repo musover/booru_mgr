@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 
 public class ImageSerializer implements JsonDeserializer<Image>, JsonSerializer<Image> {
     @Override
-    public Image deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public Image deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) {
         JsonObject o = jsonElement.getAsJsonObject();
         Image i = new Image();
         i.setId(o.get("id").getAsString());
