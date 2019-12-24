@@ -28,6 +28,8 @@ import java.util.Arrays;
  */
 public class Danbooru2Requests {
 
+    private static final String AUTH_HEADER = "Authorization";
+
     private Danbooru2Requests(){}
 
     static URL buildURL(String baseURL, String endpoint, NameValuePair ...param) throws IOException {
@@ -51,7 +53,7 @@ public class Danbooru2Requests {
         JsonArray a;
         URLConnection r = requestURL.openConnection();
         if(!auth.isEmpty())
-            r.addRequestProperty("Authorization",auth);
+            r.addRequestProperty(AUTH_HEADER,auth);
         r.setDoInput(true);
         try(BufferedReader br = new BufferedReader(new InputStreamReader(r.getInputStream()))){
             Gson g = new Gson();
@@ -118,7 +120,7 @@ public class Danbooru2Requests {
         URL requestURL = buildURL(baseURL, "/uploads.json");
 
         HttpPost r = new HttpPost(requestURL.toString());
-        r.addHeader("Authorization",auth);
+        r.addHeader(AUTH_HEADER,auth);
         MultipartEntityBuilder b = MultipartEntityBuilder.create();
         for(NameValuePair p : param) {
             b.addTextBody(p.getName(), p.getValue());
@@ -150,7 +152,7 @@ public class Danbooru2Requests {
 
         try(CloseableHttpClient c = HttpClients.createDefault()){
             HttpPut r = new HttpPut(requestURL.toString());
-            r.addHeader("Authorization",auth);
+            r.addHeader(AUTH_HEADER,auth);
             EntityBuilder b = EntityBuilder.create();
             b.setParameters(param);
 

@@ -23,11 +23,18 @@ import java.util.Map;
 public class Gelbooru extends Booru {
 
     private static TagManager tm;
+    private static boolean tmEnabled = true;
 
     static {
-        switch(Configuration.DB_VENDOR.toLowerCase()){
+        switch(Configuration.getDbVendor().toLowerCase()){
             case "h2":
                 tm = new H2TagManager();
+                break;
+            case "postgres":
+                // tm = new PostgresTagManager(); //(NYI)
+                break;
+            default:
+                tmEnabled = false;
                 break;
         }
     }
@@ -53,7 +60,10 @@ public class Gelbooru extends Booru {
 
         post = getJsonObject(requestURL);
 
-        tagDictGen(post);
+        if(tmEnabled)
+            tagDictGen(post);
+        else
+            post.addProperty("tag_string_general", post.get("tags").getAsString());
 
         return post;
     }

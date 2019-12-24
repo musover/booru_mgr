@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.UUID;
 
 public abstract class Booru implements Serializable {
 

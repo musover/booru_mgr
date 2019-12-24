@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class H2TagManager implements TagManager {
 
-    private static String url = Configuration.DB_URL;
+    private static String url = Configuration.getDbUrl();
 
     public void insertTag(String tagName, String tagType) throws SQLException {
         String sql = "MERGE INTO tags KEY (NAME) VALUES(?,?)";
