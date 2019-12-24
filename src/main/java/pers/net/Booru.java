@@ -7,13 +7,22 @@ import dom.datatype.Rating;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.UUID;
 
-public abstract class Booru {
+public abstract class Booru implements Serializable {
 
     protected URL url;
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
     public Booru(String url) throws MalformedURLException {
         this.url = new URL(url);

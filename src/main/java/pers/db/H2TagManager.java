@@ -1,10 +1,12 @@
 package pers.db;
 
+import logic.main.Configuration;
+
 import java.sql.*;
 
 public class H2TagManager implements TagManager {
 
-    private static String url = "jdbc:h2:~/.gdpv4";
+    private static String url = Configuration.DB_URL;
 
     public void insertTag(String tagName, String tagType) throws SQLException {
         String sql = "MERGE INTO tags KEY (NAME) VALUES(?,?)";

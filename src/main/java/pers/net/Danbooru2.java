@@ -18,14 +18,34 @@ import java.util.*;
 
 public class Danbooru2 extends Booru {
 
-    private String basicAuth;
+    private transient String basicAuth;
+    private String username;
+    private String apiKey;
 
     public Danbooru2(String url) throws MalformedURLException {
         super(url);
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
     public Danbooru2(String url, String username, String apiKey) throws MalformedURLException {
         super(url);
+        this.username = username;
+        this.apiKey = apiKey;
         this.basicAuth = "Basic "+ Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
     }
 

@@ -3,6 +3,7 @@ package pers.net;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import logic.main.Configuration;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.client.utils.URIBuilder;
 import pers.db.H2TagManager;
@@ -24,9 +25,11 @@ public class Gelbooru extends Booru {
     private static TagManager tm;
 
     static {
-        // TODO: some shit to determine the appropriate TagManager
-        // for now we only have H2
-        tm = new H2TagManager();
+        switch(Configuration.DB_VENDOR.toLowerCase()){
+            case "h2":
+                tm = new H2TagManager();
+                break;
+        }
     }
     public Gelbooru(String url) throws MalformedURLException {
         super(url);
@@ -67,7 +70,6 @@ public class Gelbooru extends Booru {
         return post;
     }
 
-    // TODO: Refactor this SUPER FUGLY mess
     private void tagDictGen(JsonObject o){
         Map<String, StringBuilder> attempt = new HashMap<>();
         String tagstring = o.get("tags").getAsString();
