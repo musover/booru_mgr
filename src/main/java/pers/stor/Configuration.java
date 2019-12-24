@@ -99,7 +99,7 @@ public class Configuration {
                 save();
             } catch(IOException ex){
                 Logger.getLogger(Configuration.class.getCanonicalName())
-                        .log(Level.SEVERE,"Could not save default config. Bailing out.", e);
+                        .log(Level.SEVERE,"Could not save default config. Bailing out.", ex);
                 System.exit(420);
             }
         }
