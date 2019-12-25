@@ -1,4 +1,4 @@
-package pers.stor;
+package pers.stor.typeadapters;
 
 import com.google.gson.*;
 

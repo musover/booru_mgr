@@ -18,7 +18,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class Danbooru2 extends Booru implements IUploadable {
+public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable {
 
     private transient String basicAuth = "";
     private String username;
@@ -143,5 +143,22 @@ public class Danbooru2 extends Booru implements IUploadable {
                 this.basicAuth,
                 newPost,
                 new BasicNameValuePair("post[source]", p.getSource()));
+    }
+
+    @Override
+    public void artistCreate(Artist a) throws IOException, NoPermissionException {
+        List<NameValuePair> param = new ArrayList<>();
+        param.add(new BasicNameValuePair("artist[name]", a.getName()));
+        if(!a.getUrlString().isEmpty())
+            param.add(new BasicNameValuePair("artist[url_string]", a.getUrlString()));
+        if(!a.getGroupName().isEmpty())
+            param.add(new BasicNameValuePair("artist[group_name]", a.getGroupName()));
+        if(!a.getOtherNames().isEmpty())
+            param.add(new BasicNameValuePair("artist[other_names]", a.getOtherNames()));
+
+        if(basicAuth == null || this.basicAuth.isEmpty())
+            throw new NoPermissionException("You are not authenticated.");
+
+        Danbooru2Requests.artistCreate(url.toString(), basicAuth, param.toArray(NameValuePair[]::new));
     }
 }

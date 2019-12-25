@@ -173,5 +173,32 @@ public class Danbooru2Requests {
         }
     }
 
+    /**
+     * Issues a POST request to create an artist
+     * @param baseURL Danbooru2 object's url
+     * @param auth Danbooru2 object's basicAuth
+     * @param param artist[name] - REQUIRED, should be unique
+     *              artist[other_names] - space separated list of other_names
+     *              artist[group_name]
+     *              artist[url_string] - space separated
+     *              artist[notes] wiki entry (we don't care about that atm)
+     * @throws IOException .
+     */
+    public static void artistCreate(String baseURL, String auth, NameValuePair ...param) throws IOException {
+        URL requestURL = buildURL(baseURL, "artists.json");
+
+        try(CloseableHttpClient c = HttpClients.createDefault()){
+            HttpPost r = new HttpPost(requestURL.toString());
+            r.addHeader(AUTH_HEADER, auth);
+
+            EntityBuilder b = EntityBuilder.create();
+            b.setParameters(param);
+
+            HttpEntity e = b.build();
+            r.setEntity(e);
+            c.execute(r);
+        }
+    }
+
 
 }

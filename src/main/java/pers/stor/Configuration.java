@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.Charsets;
 import pers.net.Booru;
 import pers.net.IUploadable;
+import pers.stor.typeadapters.BooruListSerializer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,6 +27,16 @@ public class Configuration {
     private static Booru artistSource = null;
     private static boolean artistLookupEnabled = false;
     private static IUploadable uploadDestination = null;
+    private static String workdir = System.getProperty("user.dir");
+    private static String datadir = workdir;
+
+    public static String getDatadir() {
+        return datadir;
+    }
+
+    public static void setDatadir(String datadir) {
+        Configuration.datadir = datadir;
+    }
 
     public static String getDbVendor() {
         return dbVendor;
@@ -85,12 +96,11 @@ public class Configuration {
         Configuration.workdir = workdir;
     }
 
-    private static String workdir = System.getProperty("user.dir");
     private Configuration(){}
     static {
         try {
             load();
-        } catch(FileNotFoundException e) {
+        } catch(FileNotFoundException|NullPointerException e) {
             try {
                 save();
             } catch(IOException ex){
@@ -113,7 +123,7 @@ public class Configuration {
     }
 
     public static void save() throws IOException {
-        Gson g = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(boards.getClass(), new BooruListSerializer()).create();
+        Gson g = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(boards.getClass(), new BooruListSerializer()).create();
         Path p = Paths.get(workdir, "config.json");
 
         JsonObject configTree = new JsonObject();
@@ -128,8 +138,9 @@ public class Configuration {
         database.addProperty("pass", dbPass);
 
         configTree.add("database", database);
-        configTree.addProperty("artistSource", artistSource.getUrl().toString());
-        configTree.addProperty("uploadDestination", uploadDestination.getUrl().toString());
+        configTree.addProperty("artistSource", (artistSource == null) ? null : artistSource.getUrl().toString());
+        configTree.addProperty("uploadDestination", (uploadDestination == null) ? null : uploadDestination.getUrl().toString());
+        configTree.addProperty("datadir",datadir);
 
         Files.writeString(p, g.toJson(configTree), Charsets.UTF_8);
     }
@@ -157,16 +168,21 @@ public class Configuration {
         JsonObject configTree = g.fromJson(s, JsonObject.class);
         JsonObject database = configTree.getAsJsonObject("database");
         boards = g.fromJson(configTree.get("boards"), new TypeToken<List<Booru>>(){}.getType());
+
         setDbVendor(database.get("vendor").getAsString());
+
         setDbUrl(database.get("url").getAsString());
 
-        if(database.get("user") != null && database.get("user").isJsonNull())
+        if(database.get("user") != null && !database.get("user").isJsonNull())
             setDbUser(database.get("user").getAsString());
         if(database.get("pass") != null && !database.get("pass").isJsonNull())
             setDbPass(database.get("pass").getAsString());
 
         String artistSourceUrl = configTree.get("artistSource").getAsString();
         String uploadDestinationUrl = configTree.get("uploadDestination").getAsString();
+
+        if(configTree.get("datadir") != null)
+            setDatadir(configTree.get("datadir").getAsString());
         for(Booru b : boards){
             if(b.getUrl().toString().equals(artistSourceUrl))
                 setArtistSource(b);
