@@ -89,4 +89,33 @@ public class PostStorage implements DataStorage<Post> {
 
         return posts;
     }
+
+    public void export(Post t) throws IOException{
+        Path path = Paths.get(Configuration.getDatadir(),"exports");
+        if(!path.toFile().exists() && !path.toFile().isDirectory())
+            Files.createDirectory(path);
+
+        export(t, path);
+    }
+
+    public void exportAll(List<Post> t) throws IOException {
+        Path path = Paths.get(Configuration.getDatadir(),"exports");
+        if(!path.toFile().exists() && !path.toFile().isDirectory())
+            Files.createDirectory(path);
+
+        exportAll(t, path);
+    }
+
+    public void export(Post t, Path p) throws IOException{
+        Image i = t.getImage();
+
+        Path actualPath = Paths.get(p.toString(), i.getPseudofilename());
+        Files.write(actualPath, i.getFile());
+    }
+
+    public void exportAll(List<Post> t, Path p) throws IOException{
+        for(Post i : t){
+            export(i, p);
+        }
+    }
 }

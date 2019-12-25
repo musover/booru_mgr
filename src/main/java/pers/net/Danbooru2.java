@@ -18,7 +18,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable {
+public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable, IArtistSource {
 
     private transient String basicAuth = "";
     private String username;

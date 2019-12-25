@@ -31,6 +31,8 @@ public abstract class Booru implements Serializable, IBooru {
         return getPost(id, true);
     }
 
+    public abstract JsonObject postShow(String id) throws IOException;
+
     public Post getPost(String id, boolean hideDomain) throws IOException {
         JsonObject post = postShow(id);
         String fullPostID = hideDomain ? id : url.getHost()+"_"+id;

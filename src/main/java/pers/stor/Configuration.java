@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.Charsets;
 import pers.net.Booru;
+import pers.net.IArtistSource;
 import pers.net.IUploadable;
 import pers.stor.typeadapters.BooruListSerializer;
 
@@ -24,7 +25,7 @@ public class Configuration {
     private static String dbUser = null;
     private static String dbPass = null;
     private static List<Booru> boards = new ArrayList<>();
-    private static Booru artistSource = null;
+    private static IArtistSource artistSource = null;
     private static boolean artistLookupEnabled = false;
     private static IUploadable uploadDestination = null;
     private static String workdir = System.getProperty("user.dir");
@@ -62,11 +63,11 @@ public class Configuration {
         Configuration.dbPass = dbPass;
     }
 
-    public static Booru getArtistSource() {
+    public static IArtistSource getArtistSource() {
         return artistSource;
     }
 
-    public static void setArtistSource(Booru artistSource) {
+    public static void setArtistSource(IArtistSource artistSource) {
         Configuration.artistSource = artistSource;
         if(artistSource != null)
             artistLookupEnabled = true;
@@ -185,7 +186,7 @@ public class Configuration {
             setDatadir(configTree.get("datadir").getAsString());
         for(Booru b : boards){
             if(b.getUrl().toString().equals(artistSourceUrl))
-                setArtistSource(b);
+                setArtistSource((IArtistSource) b);
             if(b.getUrl().toString().equals(uploadDestinationUrl))
                 setUploadDestination((IUploadable) b);
         }

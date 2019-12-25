@@ -1,6 +1,7 @@
 package logic.master;
 
 import dom.datatype.Post;
+import logic.main.GDPv4;
 import logic.slave.PostDownloadSlave;
 import pers.net.Booru;
 
@@ -26,9 +27,13 @@ public class PostDownloadMaster implements Callable<List<Post>> {
             for(String id : e.getValue()){
                 PostDownloadSlave thread = new PostDownloadSlave(e.getKey(), id);
                 Future<Post> result = pool.submit(thread);
-                posts.add(result.get());
+                Post p = result.get();
+                posts.add(p);
+                GDPv4.enqueueArtists(p.getArtists(false).split(" "));
             }
         }
+
+        GDPv4.enqueueArtist("$");
 
         pool.shutdown();
 

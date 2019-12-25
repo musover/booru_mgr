@@ -10,7 +10,6 @@ public interface IBooru {
 
     void setUrl(URL url);
     URL getUrl();
-    JsonObject postShow(String id) throws IOException;
     Post getPost(String id) throws IOException;
     Post getPost(String id, boolean hideDomain) throws IOException;
 }

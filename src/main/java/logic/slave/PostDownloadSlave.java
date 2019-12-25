@@ -5,6 +5,8 @@ import pers.net.Booru;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PostDownloadSlave implements Callable<Post> {
     private Booru board;
@@ -16,7 +18,7 @@ public class PostDownloadSlave implements Callable<Post> {
     }
     @Override
     public Post call() throws IOException {
-        System.out.println("A slave is slaving away at "+postId);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "ArtistSlave looking up "+postId);
         return board.getPost(postId, false);
     }
 }
