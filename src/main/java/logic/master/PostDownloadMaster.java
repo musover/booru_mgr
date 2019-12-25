@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class PostDownloadMaster implements Callable<List<Post>> {
 
@@ -20,16 +21,22 @@ public class PostDownloadMaster implements Callable<List<Post>> {
         pool = Executors.newCachedThreadPool();
     }
     @Override
-    public List<Post> call() throws ExecutionException, InterruptedException {
-        System.out.println("The Post Master has been summoned");
+    public List<Post> call() throws InterruptedException {
+        Logger.getLogger(getClass().getName()).info("The Post Master has been summoned");
         List<Post> posts = new ArrayList<>();
         for(Map.Entry<Booru, List<String>> e : map.entrySet()){
             for(String id : e.getValue()){
                 PostDownloadSlave thread = new PostDownloadSlave(e.getKey(), id);
                 Future<Post> result = pool.submit(thread);
-                Post p = result.get();
-                posts.add(p);
-                GDPv4.enqueueArtists(p.getArtists(false).split(" "));
+                try {
+                    Post p = result.get();
+                    if (p != null)
+                        posts.add(p);
+                    if (p != null && !p.getArtists(false).isEmpty())
+                        GDPv4.enqueueArtists(p.getArtists(false).split(" "));
+                } catch(ExecutionException ex){
+                    Logger.getLogger(getClass().getName()).info("Some stuff went wrong: " + ex.getMessage());
+                }
             }
         }
 

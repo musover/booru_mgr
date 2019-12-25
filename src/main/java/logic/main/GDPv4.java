@@ -3,7 +3,9 @@ package logic.main;
 import dom.datatype.Artist;
 import dom.datatype.Post;
 import logic.master.ArtistLookupMaster;
+import logic.master.ArtistUploadMaster;
 import logic.master.PostDownloadMaster;
+import logic.master.PostUploadMaster;
 import pers.net.Booru;
 import pers.net.Danbooru2;
 import pers.net.Gelbooru;
@@ -25,6 +27,8 @@ public class GDPv4 {
     private static BlockingQueue<String> artistQueue = new LinkedBlockingQueue<>();
     private static List<Artist> artistList = new ArrayList<>();
     private static ExecutorService threadpool = Executors.newCachedThreadPool();
+    private static List<Post> uploadList = new ArrayList<>();
+    private static ConcurrentHashMap<Post, UploadState> uploadResults = new ConcurrentHashMap<>();
 
     private GDPv4(){
 
@@ -77,6 +81,41 @@ public class GDPv4 {
         artistQueue.addAll(Arrays.asList(name));
     }
 
+    public static void enqueueUpload(Post p){
+        uploadList.add(p);
+    }
+
+    public static void enqueueUploads(Collection<Post> p){
+        uploadList.addAll(p);
+    }
+
+    public static void upload(){
+        PostUploadMaster um = new PostUploadMaster(uploadList);
+        threadpool.submit(um);
+
+        if(Configuration.isArtistLookupEnabled()){
+            ArtistUploadMaster aum = new ArtistUploadMaster(artistList);
+            threadpool.submit(aum);
+        }
+        threadpool.shutdown();
+    }
+
+    public static void setSuccessfulUpload(Post p){
+        uploadResults.put(p, UploadState.SUCCESSFUL);
+    }
+
+    public static void setFailedUpload(Post p){
+        uploadResults.put(p, UploadState.FAILED);
+    }
+
+    public static void setDuplicateUpload(Post p){
+        uploadResults.put(p, UploadState.DUPLICATE);
+    }
+
+    public static Map<Post, UploadState> getUploads(){
+        return uploadResults;
+    }
+
     public static void download(String urls) throws ExecutionException, InterruptedException {
         setUrls(urls);
         parseUrls();
@@ -91,6 +130,10 @@ public class GDPv4 {
         }
 
         postList = result.get();
+    }
+
+    public static List<Post> getDownloads(){
+        return postList;
     }
 
     public static void shutdown(){

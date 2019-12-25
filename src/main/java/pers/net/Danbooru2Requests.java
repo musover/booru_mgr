@@ -35,7 +35,7 @@ public class Danbooru2Requests {
     static URL buildURL(String baseURL, String endpoint, NameValuePair ...param) throws IOException {
         URL requestURL;
         try {
-            URIBuilder u = new URIBuilder(baseURL + endpoint);
+            URIBuilder u = new URIBuilder(baseURL + "/" + endpoint);
             u.addParameters(Arrays.asList(param));
             requestURL = u.build().toURL();
         } catch(URISyntaxException e){
@@ -137,7 +137,6 @@ public class Danbooru2Requests {
 
             Gson g = new Gson();
             o = g.fromJson(new InputStreamReader(resp.getEntity().getContent()), JsonObject.class);
-
         }
 
         if(o.get("post_id") instanceof JsonNull)

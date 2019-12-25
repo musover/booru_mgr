@@ -17,8 +17,8 @@ public class PostDownloadSlave implements Callable<Post> {
         this.postId = postId;
     }
     @Override
-    public Post call() throws IOException {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "ArtistSlave looking up "+postId);
+    public Post call() throws IOException, NullPointerException {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "PostSlave looking up "+postId);
         return board.getPost(postId, false);
     }
 }

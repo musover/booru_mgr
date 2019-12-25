@@ -69,6 +69,9 @@ public class Gelbooru extends Booru {
 
         post = getJsonObject(requestURL);
 
+        if(post == null)
+            return null;
+
         if(tmEnabled)
             tagDictGen(post);
         else
@@ -84,7 +87,10 @@ public class Gelbooru extends Booru {
         try(BufferedReader br = new BufferedReader(new InputStreamReader(r.getInputStream()))) {
             Gson g = new Gson();
             JsonArray a = g.fromJson(br, JsonArray.class);
-            post = a.get(0).getAsJsonObject();
+            if(!a.isJsonNull())
+                post = a.get(0).getAsJsonObject();
+            else
+                post = null;
         }
         return post;
     }
@@ -133,13 +139,14 @@ public class Gelbooru extends Booru {
         try{
             type = tm.getType(tagName);
             if(type.equals("")){
+                JsonObject tag = tagShow(tagName);
                 type = tagShow(tagName).get("type").getAsString();
                 tm.insertTag(tagName, type);
             }
         } catch(SQLException e){
             disableTm();
             type = "";
-        } catch(IOException e){
+        } catch(IOException|NullPointerException e){
             type = "";
         }
 
