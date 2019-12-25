@@ -47,7 +47,8 @@ public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable {
     }
 
     public void updateBasicAuth(){
-        this.basicAuth = "Basic "+ Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
+        if(username != null && apiKey != null)
+            this.basicAuth = "Basic "+ Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
     }
 
     public Danbooru2(String url, String username, String apiKey) throws MalformedURLException {
@@ -160,5 +161,15 @@ public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable {
             throw new NoPermissionException("You are not authenticated.");
 
         Danbooru2Requests.artistCreate(url.toString(), basicAuth, param.toArray(NameValuePair[]::new));
+    }
+
+    @Override
+    public String toString() {
+        return "Danbooru2{" +
+                "basicAuth='" + basicAuth + '\'' +
+                ", username='" + username + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                ", url=" + url +
+                '}';
     }
 }
