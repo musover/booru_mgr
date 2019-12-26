@@ -43,7 +43,6 @@ public class GDPv4 {
             for(String url : urlQueue) {
                 String postId = "";
                 String searchtoken = "";
-                Pattern search = null;
                 String filtertoken = "";
 
                 if (b instanceof Danbooru2) {
@@ -69,8 +68,6 @@ public class GDPv4 {
                 }
             }
         }
-
-        System.out.println(downloadQueue);
     }
 
     public static void enqueueArtist(String name) throws InterruptedException {

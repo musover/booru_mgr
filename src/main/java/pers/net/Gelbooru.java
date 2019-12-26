@@ -139,7 +139,6 @@ public class Gelbooru extends Booru {
         try{
             type = tm.getType(tagName);
             if(type.equals("")){
-                JsonObject tag = tagShow(tagName);
                 type = tagShow(tagName).get("type").getAsString();
                 tm.insertTag(tagName, type);
             }

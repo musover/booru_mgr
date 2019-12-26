@@ -80,7 +80,7 @@ public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable, 
      */
     public Artist artistGet(String name) throws IOException {
         BasicNameValuePair param = new BasicNameValuePair("search[name]", name);
-        //TODO: null check
+        //（ ´∀｀）＜ ぬるぽ
         JsonArray arr = Danbooru2Requests.listArtists(this.url.toString(), param);
         JsonObject a;
         if(arr.size() >= 1)

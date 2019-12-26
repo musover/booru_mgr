@@ -1,6 +1,5 @@
 package pers.net;
 
-import com.google.gson.JsonObject;
 import dom.datatype.Post;
 
 import java.io.IOException;

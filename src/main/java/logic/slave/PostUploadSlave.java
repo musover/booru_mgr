@@ -24,16 +24,20 @@ public class PostUploadSlave implements Runnable {
             booru.postCreate(post);
             GDPv4.setSuccessfulUpload(post);
             Logger.getLogger(getClass().getName()).info(post.getId()+", upload successful");
-        } catch(IOException|NoPermissionException e){
-            if(e instanceof IOException && e.getMessage().contains("duplicate")){
+        } catch(IOException e) {
+            if(e.getMessage().contains("duplicate")) {
                 GDPv4.setDuplicateUpload(post);
-                Logger.getLogger(getClass().getName()).info(post.getId()+", upload duplicate");
+                Logger.getLogger(getClass().getName()).info(post.getId() + ", upload duplicate");
             } else {
                 GDPv4.setFailedUpload(post);
                 Logger.getLogger(getClass().getName()).info(post.getId()+", upload failed due to " + e.getMessage());
-
             }
+        } catch(NoPermissionException e){
+            GDPv4.setFailedUpload(post);
+            Logger.getLogger(getClass().getName()).info(post.getId()+", upload failed due to missing authentication.");
+            // we should bail out here
         }
+
 
     }
 }

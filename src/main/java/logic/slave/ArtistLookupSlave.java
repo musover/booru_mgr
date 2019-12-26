@@ -18,8 +18,8 @@ public class ArtistLookupSlave implements Callable<Artist> {
         this.name = name;
     }
     @Override
-    public Artist call() throws IOException, NullPointerException {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "ArtistSlave looking up "+name);
+    public Artist call() throws IOException {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "ArtistSlave looking up %s", name);
         return booru.artistGet(name);
     }
 }

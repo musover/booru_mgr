@@ -3,7 +3,6 @@ package pers.stor.datatype;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dom.datatype.Artist;
-import dom.datatype.Post;
 import pers.stor.Configuration;
 
 import java.io.File;

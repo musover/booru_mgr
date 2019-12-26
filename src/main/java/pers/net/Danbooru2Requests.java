@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dom.datatype.Image;
+import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.EntityBuilder;
@@ -32,10 +33,18 @@ public class Danbooru2Requests {
 
     private Danbooru2Requests(){}
 
+    /**
+     * Builds the url
+     * @param baseURL base URL for the request
+     * @param endpoint THIS MUST HAVE A SLASH
+     * @param param etc
+     * @return a URL
+     * @throws IOException whatever
+     */
     static URL buildURL(String baseURL, String endpoint, NameValuePair ...param) throws IOException {
         URL requestURL;
         try {
-            URIBuilder u = new URIBuilder(baseURL + "/" + endpoint);
+            URIBuilder u = new URIBuilder(baseURL + endpoint);
             u.addParameters(Arrays.asList(param));
             requestURL = u.build().toURL();
         } catch(URISyntaxException e){
@@ -130,6 +139,7 @@ public class Danbooru2Requests {
 
         HttpEntity multipart = b.build();
         r.setEntity(multipart);
+        b.setCharset(Charsets.UTF_8);
 
         JsonObject o;
         try(CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -165,6 +175,7 @@ public class Danbooru2Requests {
             r.addHeader(AUTH_HEADER,auth);
             EntityBuilder b = EntityBuilder.create();
             b.setParameters(param);
+            b.setContentEncoding("UTF-8");
 
             HttpEntity e = b.build();
             r.setEntity(e);
@@ -184,14 +195,16 @@ public class Danbooru2Requests {
      * @throws IOException .
      */
     public static void artistCreate(String baseURL, String auth, NameValuePair ...param) throws IOException {
-        URL requestURL = buildURL(baseURL, "artists.json");
+        URL requestURL = buildURL(baseURL, "/artists.json");
 
-        try(CloseableHttpClient c = HttpClients.createDefault()){
+        try(CloseableHttpClient c = HttpClients.createDefault())
+        {
             HttpPost r = new HttpPost(requestURL.toString());
             r.addHeader(AUTH_HEADER, auth);
 
             EntityBuilder b = EntityBuilder.create();
             b.setParameters(param);
+            b.setContentEncoding("UTF-8");
 
             HttpEntity e = b.build();
             r.setEntity(e);
