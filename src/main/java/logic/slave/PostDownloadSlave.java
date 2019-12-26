@@ -18,7 +18,7 @@ public class PostDownloadSlave implements Callable<Post> {
     }
     @Override
     public Post call() throws IOException {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "PostSlave looking up %s",postId);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "PostSlave looking up {0}",postId);
         return board.getPost(postId, false);
     }
 }

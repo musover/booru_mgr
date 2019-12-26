@@ -19,7 +19,7 @@ public class ArtistLookupSlave implements Callable<Artist> {
     }
     @Override
     public Artist call() throws IOException {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "ArtistSlave looking up %s", name);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "ArtistSlave looking up {0}", name);
         return booru.artistGet(name);
     }
 }
