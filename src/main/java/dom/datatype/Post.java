@@ -162,4 +162,9 @@ public class Post implements Serializable {
     public void setSource(String s){
         this.source = s;
     }
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }

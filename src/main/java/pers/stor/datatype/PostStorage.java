@@ -41,20 +41,25 @@ public class PostStorage implements DataStorage<Post> {
     }
 
     public void save(Post p, Path path) throws IOException {
+        Path actualPath = Paths.get(path.toString(), p.getId()+".json");
+        saveFile(p, actualPath);
+    }
+
+    public void saveFile(Post p, Path path) throws IOException {
         Gson g = new GsonBuilder()
                 .registerTypeHierarchyAdapter(byte[].class, new ByteArrayTypeAdapter())
                 .registerTypeHierarchyAdapter(Image.class, new ImageSerializer())
                 .create();
-        Path actualPath = Paths.get(path.toString(), p.getId()+".json");
         String o = g.toJson(p);
         try {
-            Files.createFile(actualPath);
+            Files.createFile(path);
         } catch(FileAlreadyExistsException ignore){
             //ignore
         }
 
-        Files.writeString(actualPath, o);
+        Files.writeString(path, o);
     }
+
 
     @Override
     public void saveAll(List<Post> t) throws IOException {
@@ -111,6 +116,11 @@ public class PostStorage implements DataStorage<Post> {
 
         Path actualPath = Paths.get(p.toString(), i.getPseudofilename());
         Files.write(actualPath, i.getFile());
+    }
+
+    public void exportFile(Post t, Path p) throws IOException {
+        Image i = t.getImage();
+        Files.write(p, i.getFile());
     }
 
     public void exportAll(List<Post> t, Path p) throws IOException{

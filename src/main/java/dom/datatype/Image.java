@@ -1,6 +1,7 @@
 package dom.datatype;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,14 +44,19 @@ public class Image implements Serializable {
     }
 
     public String getPseudofilename(){
-        StringBuilder sb = new StringBuilder(id);
-        sb.append(".");
-        if(getMimetype().equals("image/jpeg")){
-            sb.append("jpg");
-        } else {
-            sb.append(getMimetype().replaceAll(".*/",""));
-        }
 
-        return sb.toString();
+        return id + "." + getSupposedExtension();
+    }
+
+    public String getSupposedExtension(){
+        if(getMimetype().equals("image/jpeg")){
+            return "jpg";
+        } else {
+            return getMimetype().replaceAll(".*/","");
+        }
+    }
+
+    public InputStream getImageInputStream() throws IOException {
+        return Files.newInputStream(path);
     }
 }
