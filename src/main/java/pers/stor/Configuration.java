@@ -24,6 +24,16 @@ public class Configuration {
     private static String dbUrl = "jdbc:h2:mem:gdpv4;DB_CLOSE_DELAY=-1";
     private static String dbUser = null;
     private static String dbPass = null;
+    private static boolean dbEnabled = true;
+
+    public static boolean isDbEnabled() {
+        return dbEnabled;
+    }
+
+    public static void setDbEnabled(boolean dbEnabled) {
+        Configuration.dbEnabled = dbEnabled;
+    }
+
     private static List<Booru> boards = new ArrayList<>();
     private static IArtistSource artistSource = null;
     private static boolean artistLookupEnabled = false;
@@ -179,11 +189,17 @@ public class Configuration {
         if(database.get("pass") != null && !database.get("pass").isJsonNull())
             setDbPass(database.get("pass").getAsString());
 
-        String artistSourceUrl = configTree.get("artistSource").getAsString();
-        String uploadDestinationUrl = configTree.get("uploadDestination").getAsString();
+        String artistSourceUrl = null;
+        String uploadDestinationUrl = null;
+
+        if(!configTree.get("artistSource").isJsonNull())
+            artistSourceUrl = configTree.get("artistSource").getAsString();
+        if(!configTree.get("uploadDestination").isJsonNull())
+            uploadDestinationUrl = configTree.get("uploadDestination").getAsString();
 
         if(configTree.get("datadir") != null)
             setDatadir(configTree.get("datadir").getAsString());
+
         for(Booru b : boards){
             if(b.getUrl().toString().equals(artistSourceUrl))
                 setArtistSource((IArtistSource) b);

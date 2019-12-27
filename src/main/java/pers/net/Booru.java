@@ -87,4 +87,8 @@ public abstract class Booru implements Serializable, IBooru {
         return result;
     }
 
+    public String getClassName(){
+        return this.getClass().getCanonicalName();
+    }
+
 }

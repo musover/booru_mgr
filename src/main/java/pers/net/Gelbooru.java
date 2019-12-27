@@ -23,7 +23,6 @@ import java.util.Map;
 public class Gelbooru extends Booru {
 
     private static TagManager tm;
-    private static boolean tmEnabled = true;
 
     static {
         switch(Configuration.getDbVendor().toLowerCase()){
@@ -32,20 +31,20 @@ public class Gelbooru extends Booru {
                 try{
                     tm.createTable();
                 } catch(SQLException e){
-                    tmEnabled = false;
+                    Configuration.setDbEnabled(false);
                 }
                 break;
             case "postgres":
                 // tm = new PostgresTagManager(); //(NYI)
                 break;
             default:
-                tmEnabled = false;
+                Configuration.setDbEnabled(false);
                 break;
         }
     }
 
     public static synchronized void disableTm(){
-        tmEnabled = false;
+        Configuration.setDbEnabled(false);
     }
     public Gelbooru(String url) throws MalformedURLException {
         super(url);
@@ -72,7 +71,7 @@ public class Gelbooru extends Booru {
         if(post == null)
             return null;
 
-        if(tmEnabled)
+        if(Configuration.isDbEnabled())
             tagDictGen(post);
         else
             post.addProperty("tag_string_general", post.get("tags").getAsString());

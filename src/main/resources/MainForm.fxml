@@ -36,7 +36,7 @@
             <MenuItem mnemonicParsing="false" text="Export" />
             <MenuItem mnemonicParsing="false" text="Export as..." />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" onAction="#configForm"/>
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
@@ -59,7 +59,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ListView prefHeight="200.0" prefWidth="200.0" fx:id="list" onMouseClicked="#updatePostView" />
+                  <ListView prefHeight="200.0" prefWidth="200.0" fx:id="list" />
                   <AnchorPane maxHeight="${parentAnchorPane.height}" prefHeight="${parentAnchorPane.height}" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" VBox.vgrow="ALWAYS" fx:id="rightAnchorPane">
                      <children>
                          <BorderPane fx:id="imageBorderPane" prefWidth="${rightAnchorPane.width}" maxWidth="${rightAnchorPane.width}" layoutX="163.0" layoutY="14.0"  AnchorPane.bottomAnchor="285.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" style="-fx-alignment: CENTER;" GridPane.vgrow="ALWAYS" VBox.vgrow="ALWAYS">
