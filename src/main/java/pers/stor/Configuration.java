@@ -25,6 +25,18 @@ public class Configuration {
     private static String dbUser = null;
     private static String dbPass = null;
     private static boolean dbEnabled = true;
+    private static List<Booru> boards = new ArrayList<>();
+    private static IArtistSource artistSource = null;
+    private static boolean artistLookupEnabled = false;
+    private static IUploadable uploadDestination = null;
+    private static String workdir = System.getProperty("user.dir");
+    private static String datadir = workdir;
+    private static List<Booru> tempDisabledBoards = new ArrayList<>();
+
+    public static void temporarilyDisableBoard(Booru b){
+        boards.remove(b);
+        tempDisabledBoards.add(b);
+    }
 
     public static boolean isDbEnabled() {
         return dbEnabled;
@@ -34,12 +46,6 @@ public class Configuration {
         Configuration.dbEnabled = dbEnabled;
     }
 
-    private static List<Booru> boards = new ArrayList<>();
-    private static IArtistSource artistSource = null;
-    private static boolean artistLookupEnabled = false;
-    private static IUploadable uploadDestination = null;
-    private static String workdir = System.getProperty("user.dir");
-    private static String datadir = workdir;
 
     public static String getDatadir() {
         return datadir;
@@ -136,6 +142,9 @@ public class Configuration {
     public static void save() throws IOException {
         Gson g = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(boards.getClass(), new BooruListSerializer()).create();
         Path p = Paths.get(workdir, "config.json");
+
+        if(!boards.containsAll(tempDisabledBoards))
+            boards.addAll(tempDisabledBoards);
 
         JsonObject configTree = new JsonObject();
         JsonElement boardJson = g.toJsonTree(boards);

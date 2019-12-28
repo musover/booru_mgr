@@ -14,8 +14,12 @@ import pers.stor.datatype.ArtistStorage;
 import pers.stor.datatype.PostStorage;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.NoRouteToHostException;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
@@ -32,6 +36,19 @@ public class GDPv4 {
 
     private GDPv4(){
 
+    }
+
+    public static void init() {
+        for(Booru b : Configuration.getBoards()){
+            try {
+                URLConnection c = b.getUrl().openConnection();
+                c.setDoInput(true);
+                c.getInputStream().close();
+            } catch(IOException e){
+                Configuration.temporarilyDisableBoard(b);
+                Logger.getLogger(GDPv4.class.getName()).info("Board "+b.getUrl().toString()+" failed liveness probe. Disabling.");
+            }
+        }
     }
 
     public static void setUrls(String urls){
