@@ -6,16 +6,18 @@ import pers.net.IUploadable;
 
 import javax.naming.NoPermissionException;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 public class PostUploadSlave implements Runnable {
 
     private IUploadable booru;
     private Post post;
-
-    public PostUploadSlave(IUploadable b, Post p){
+    private CountDownLatch cdl;
+    public PostUploadSlave(IUploadable b, Post p, CountDownLatch cdl){
         booru = b;
         post = p;
+        this.cdl = cdl;
     }
     @Override
     public void run() {
@@ -36,8 +38,9 @@ public class PostUploadSlave implements Runnable {
             GDPv4.setFailedUpload(post);
             Logger.getLogger(getClass().getName()).info(post.getId()+", upload failed due to missing authentication.");
             // we should bail out here
+        } finally {
+            cdl.countDown();
         }
-
 
     }
 }

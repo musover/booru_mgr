@@ -86,8 +86,8 @@ public class GDPv4 {
         uploadList.addAll(p);
     }
 
-    public static void upload(){
-        PostUploadMaster um = new PostUploadMaster(uploadList);
+    public static void upload(CountDownLatch cdl){
+        PostUploadMaster um = new PostUploadMaster(uploadList, cdl);
         threadpool.submit(um);
 
         if(Configuration.isArtistLookupEnabled()){
