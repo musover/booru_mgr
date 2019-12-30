@@ -24,6 +24,10 @@ public class Danbooru2 extends Booru implements IUploadable, IArtistUploadable, 
     private String username;
     private String apiKey;
 
+    public Danbooru2(){
+        //I need this.
+    }
+
     public Danbooru2(String url) throws MalformedURLException {
         super(url);
     }

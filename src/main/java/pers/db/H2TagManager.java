@@ -11,6 +11,10 @@ public class H2TagManager implements TagManager {
     private static String pass = Configuration.getDbPass();
     private static boolean authNeeded = (user != null) && (pass != null);
 
+    public static String getVendor(){
+        return "h2";
+    }
+
     public void insertTag(String tagName, String tagType) throws SQLException {
         String sql = "MERGE INTO tags KEY (NAME) VALUES(?,?)";
         try(Connection c = (authNeeded)

@@ -37,16 +37,19 @@ public class GDPv4 {
     }
 
     public static void init() {
+        List<Booru> disabled = new ArrayList<>();
         for(Booru b : Configuration.getBoards()){
             try {
                 URLConnection c = b.getUrl().openConnection();
                 c.setDoInput(true);
                 c.getInputStream().close();
             } catch(IOException e){
-                Configuration.temporarilyDisableBoard(b);
+                disabled.add(b);
                 Logger.getLogger(GDPv4.class.getName()).info("Board "+b.getUrl().toString()+" failed liveness probe. Disabling.");
             }
         }
+
+        Configuration.temporarilyDisableBoards(disabled);
     }
 
     public static void setUrls(String urls){

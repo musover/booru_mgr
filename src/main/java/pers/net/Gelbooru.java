@@ -46,6 +46,10 @@ public class Gelbooru extends Booru {
     public static synchronized void disableTm(){
         Configuration.setDbEnabled(false);
     }
+    public Gelbooru(){
+        super();
+        //I need this.
+    }
     public Gelbooru(String url) throws MalformedURLException {
         super(url);
     }

@@ -150,7 +150,7 @@ public class Controller {
     }
 
     public void configForm(ActionEvent actionEvent) {
-        Parent loader;
+        Stage loader;
         try {
             loader = FXMLLoader.load(Objects.requireNonNull(this.getClass().getClassLoader().getResource("ConfigForm.fxml")));
         } catch(IOException e){
@@ -159,11 +159,7 @@ public class Controller {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "FXML Loading failed.", e);
             return;
         }
-        Stage newStage = new Stage();
-        Scene s = new Scene(loader);
-        newStage.setTitle("Preferences");
-        newStage.setScene(s);
-        newStage.show();
+        loader.show();
     }
 
     public void pasteDialog(ActionEvent actionEvent) {
@@ -285,10 +281,13 @@ public class Controller {
         if(errorCounter>0)
             e = Alert.AlertType.ERROR;
 
-        String content = successCounter + " uploads completed.\n" +
-                duplicateCounter + " uploads were duplicates.\n" +
-                errorCounter + " uploads failed.";
+
+        String content = successCounter + ((successCounter!=1) ? " uploads" : " upload") +  " completed.\n" +
+                duplicateCounter + ((duplicateCounter!=1) ? " uploads were duplicates.\n" : " upload was duplicate.\n") +
+                errorCounter + ((errorCounter!=1) ? " uploads" : " upload") + " failed.";
         Alert a = new Alert(e, content);
+        a.setResizable(true);
+        a.getDialogPane().setPrefSize(480, 300);
         a.show();
 
     }

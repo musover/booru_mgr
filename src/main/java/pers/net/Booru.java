@@ -15,6 +15,11 @@ import java.net.URLConnection;
 public abstract class Booru implements Serializable, IBooru {
 
     protected URL url;
+
+    public Booru() {
+        // I need this.
+    }
+
     public URL getUrl() {
         return url;
     }

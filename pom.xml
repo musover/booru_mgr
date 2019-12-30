@@ -6,7 +6,7 @@
 
     <groupId>eu.musover</groupId>
     <artifactId>GDPv4</artifactId>
-    <version>4.0-RC1</version>
+    <version>4.0-RC2</version>
     <build>
         <plugins>
             <plugin>
@@ -126,6 +126,11 @@
             <artifactId>javafx-fxml</artifactId>
             <version>11</version>
             <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
         </dependency>
     </dependencies>
 
