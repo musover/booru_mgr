@@ -42,7 +42,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem disable="true" mnemonicParsing="false" text="Booru Manager version 4.0-RC2" />
+            <MenuItem disable="true" mnemonicParsing="false" text="Booru Manager version 4.0.0" />
           </items>
         </Menu>
       </menus>

@@ -38,7 +38,7 @@ public class ConfigController {
     @FXML private TextField tmUserField;
     @FXML private PasswordField tmPassField;
 
-    @FXML public void initialize(){
+    private void tableViewInit(){
         datadirLabel.setText(Configuration.getDatadir());
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("className"));
         urlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
@@ -64,6 +64,9 @@ public class ConfigController {
             });
         });
         tableView.setItems(FXCollections.observableList(Configuration.getBoards()));
+    }
+
+    private void choiceBoxInit(){
         artistChoiceBox.getItems().add("Disable lookup");
 
         for(Booru b : Configuration.getBoards()){
@@ -83,13 +86,21 @@ public class ConfigController {
 
         if(Configuration.getUploadDestination()!=null)
             uploadChoiceBox.setValue(Configuration.getUploadDestination().getUrl().toString());
+    }
 
+    private void dbTabInit(){
         tmCheckbox.setSelected(Configuration.isDbEnabled());
         tmVendorBox.setItems(FXCollections.observableList(Configuration.getSupportedDbVendors()));
         tmVendorBox.setValue(Configuration.getDbVendor());
         tmURLField.setText(Configuration.getDbUrl());
         tmUserField.setText(Configuration.getDbUser());
         tmPassField.setText(Configuration.getDbPass());
+    }
+
+    @FXML public void initialize(){
+        tableViewInit();
+        choiceBoxInit();
+        dbTabInit();
     }
 
     public void newBooru(ActionEvent actionEvent) {

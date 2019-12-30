@@ -3,13 +3,6 @@ package pers.stor;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.Charsets;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
-import pers.db.TagManager;
 import pers.net.Booru;
 import pers.net.IArtistSource;
 import pers.net.IUploadable;
@@ -17,18 +10,14 @@ import pers.stor.typeadapters.BooruListSerializer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class Configuration {
 

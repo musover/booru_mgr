@@ -6,7 +6,7 @@
 
     <groupId>eu.musover</groupId>
     <artifactId>GDPv4</artifactId>
-    <version>4.0-RC2</version>
+    <version>4.0.0</version>
     <build>
         <plugins>
             <plugin>
