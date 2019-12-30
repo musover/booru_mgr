@@ -1,6 +1,8 @@
 package ui;
 
 import dom.datatype.Post;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,7 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import pers.net.Booru;
+import pers.net.Danbooru2;
 import pers.net.IArtistSource;
 import pers.net.IUploadable;
 import pers.stor.Configuration;
@@ -17,10 +21,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class ConfigController {
-    @FXML private TableColumn<String, Booru> typeColumn;
-    @FXML private TableColumn<String, Booru> urlColumn;
-    @FXML private TableColumn<String, Booru> usernameColumn;
-    @FXML private TableColumn<String, Booru> apiKeyColumn;
+    @FXML private TableColumn<Booru, String> typeColumn;
+    @FXML private TableColumn<Booru, String> urlColumn;
+    @FXML private TableColumn<Booru, String> usernameColumn;
+    @FXML private TableColumn<Booru, String> apiKeyColumn;
     @FXML private TableView<Booru> tableView;
     @FXML private ChoiceBox<String> artistChoiceBox;
     @FXML private ChoiceBox<String> uploadChoiceBox;
@@ -34,8 +38,27 @@ public class ConfigController {
     @FXML public void initialize(){
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("className"));
         urlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
-        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-        apiKeyColumn.setCellValueFactory(new PropertyValueFactory<>("apiKey"));
+        usernameColumn.setCellValueFactory(x -> {
+            Booru b = x.getValue();
+            return Bindings.createStringBinding(() -> {
+                if(b instanceof IUploadable){
+                    return ((IUploadable) b).getUsername();
+                } else {
+                    return "";
+                }
+            });
+        });
+
+        apiKeyColumn.setCellValueFactory(x -> {
+            Booru b = x.getValue();
+            return Bindings.createStringBinding(() -> {
+                if(b instanceof IUploadable){
+                    return ((IUploadable) b).getApiKey();
+                } else {
+                    return "";
+                }
+            });
+        });
         tableView.setItems(FXCollections.observableList(Configuration.getBoards()));
 
         for(Booru b : Configuration.getBoards()){
