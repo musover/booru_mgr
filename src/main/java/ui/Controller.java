@@ -259,6 +259,7 @@ public class Controller {
             cdl.await();
         } catch(InterruptedException e){
             Logger.getLogger(getClass().getName()).warning(e.getMessage());
+            Thread.currentThread().interrupt();
         }
         int successCounter = 0;
         int duplicateCounter = 0;
@@ -320,7 +321,7 @@ public class Controller {
         }
     }
 
-    public void OKButtonClicked(ActionEvent actionEvent) {
+    public void okButtonClicked(ActionEvent actionEvent) {
         updateSelectedPost();
     }
 

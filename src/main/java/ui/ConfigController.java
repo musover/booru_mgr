@@ -1,8 +1,6 @@
 package ui;
 
-import dom.datatype.Post;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,15 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import pers.net.Booru;
-import pers.net.Danbooru2;
 import pers.net.IArtistSource;
 import pers.net.IUploadable;
 import pers.stor.Configuration;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ConfigController {
     @FXML private TableColumn<Booru, String> typeColumn;

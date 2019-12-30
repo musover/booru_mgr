@@ -15,19 +15,25 @@ public class DownloadController {
     @FXML private TextArea textArea;
     @FXML private ProgressIndicator progress;
 
+
     public void downloadURLs(ActionEvent actionEvent) {
         progress.setProgress(-1.0);
+        download();
+        progress.setProgress(1);
+    }
+
+    public void download(){
         String urls = textArea.getText();
         try {
             GDPv4.download(urls);
-        } catch(ExecutionException | InterruptedException e){
+        } catch (ExecutionException e) {
             progress.setProgress(0.0);
             Alert a = new Alert(Alert.AlertType.ERROR, "Download failed. Check the logs for more details.");
             a.show();
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Download failed failed.", e.getCause());
+        } catch(InterruptedException e){
+            Thread.currentThread().interrupt();
         }
-
-        progress.setProgress(1);
     }
 
 }

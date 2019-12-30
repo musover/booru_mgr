@@ -36,6 +36,7 @@ public class PostUploadMaster implements Runnable {
             slaveLatch.await();
         } catch (InterruptedException e) {
             Logger.getLogger(getClass().getName()).warning(e.getMessage());
+            Thread.currentThread().interrupt();
         }
         cdl.countDown();
     }

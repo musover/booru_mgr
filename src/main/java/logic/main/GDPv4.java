@@ -14,8 +14,6 @@ import pers.stor.datatype.ArtistStorage;
 import pers.stor.datatype.PostStorage;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
 import java.net.URLConnection;
 import java.util.*;
 import java.util.concurrent.*;
