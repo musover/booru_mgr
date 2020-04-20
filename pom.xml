@@ -60,7 +60,7 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
-                    <mainClass>eu.musover.GDPv4/ui.Main</mainClass>
+                    <mainClass>ui.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

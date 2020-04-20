@@ -9,6 +9,7 @@ import logic.master.PostUploadMaster;
 import pers.net.Booru;
 import pers.net.Danbooru2;
 import pers.net.Gelbooru;
+import pers.net.Szurubooru;
 import pers.stor.Configuration;
 import pers.stor.datatype.ArtistStorage;
 import pers.stor.datatype.PostStorage;
@@ -63,7 +64,7 @@ public class GDPv4 {
                 String searchtoken = "";
                 String filtertoken = "";
 
-                if (b instanceof Danbooru2) {
+                if (b instanceof Danbooru2 || b instanceof Szurubooru) {
                     searchtoken = "(?:/\\d+)";
                     filtertoken = "/";
                 } else if (b instanceof Gelbooru) {
