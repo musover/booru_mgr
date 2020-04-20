@@ -7,8 +7,10 @@ import com.google.gson.JsonObject;
 import dom.datatype.Image;
 import dom.datatype.Post;
 import dom.datatype.Rating;
+import dom.datatype.TagType;
 import org.apache.http.client.utils.URIBuilder;
 
+import javax.management.InstanceAlreadyExistsException;
 import javax.naming.NoPermissionException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -19,6 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class Szurubooru extends Booru implements IUploadable{
 
@@ -35,31 +38,7 @@ public class Szurubooru extends Booru implements IUploadable{
     }
     @Override
     public JsonObject postShow(String id) throws IOException {
-        JsonObject post;
-
-        URL requestURL = this.url;
-
-        try {
-            URIBuilder u = new URIBuilder(requestURL.toString()+"/api/posts");
-            u.addParameter("query","id:"+id);
-            requestURL = u.build().toURL();
-        } catch(URISyntaxException e){
-            throw new MalformedURLException(requestURL.toString());
-        }
-
-        URLConnection r = requestURL.openConnection();
-        r.setDoInput(true);
-        r.addRequestProperty("Content-Type","application/json");
-        r.addRequestProperty("Accept","application/json");
-
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(r.getInputStream()))){
-            Gson g = new Gson();
-            post = g.fromJson(br, JsonObject.class);
-        }
-
-        post = post.get("results").getAsJsonArray().get(0).getAsJsonObject();
-
-        return post;
+        return SzurubooruRequests.postShow(this.url, id);
     }
 
     @Override
@@ -126,7 +105,83 @@ public class Szurubooru extends Booru implements IUploadable{
 
     @Override
     public void postCreate(Post p) throws IOException, NoPermissionException {
+        //Create tags
+        Map<String, List<String>> tags = p.getTags();
 
+        for(Map.Entry<String, List<String>> e : tags.entrySet()){
+            if(!e.getKey().equalsIgnoreCase(TagType.GENERAL)) {
+                for (String tag : e.getValue()) {
+                    tagCreate(e.getKey(), tag);
+                }
+            }
+        }
+
+        //Create body
+        JsonObject postBody = new JsonObject();
+        JsonArray t = new JsonArray();
+        for(String tag: p.getTagList()){
+            t.add(tag);
+        }
+
+        postBody.add("tags", t);
+        switch(p.getRating()){
+            case SAFE:
+                postBody.addProperty("safety","safe");
+                break;
+            case QUESTIONABLE:
+                postBody.addProperty("safety","sketchy");
+                break;
+            case EXPLICIT:
+                postBody.addProperty("safety", "unsafe");
+                break;
+        }
+
+        if(p.getSource() != null)
+            postBody.addProperty("source", p.getSource());
+
+        SzurubooruRequests.postCreate(url, basicAuth, postBody, p.getImage());
+
+
+    }
+
+    public void tagCreate(String type, String tag) throws IOException {
+        String category = (type.equalsIgnoreCase("general") ? "default": type);
+
+        JsonObject tagBody = new JsonObject();
+        JsonArray names = new JsonArray();
+        names.add(tag);
+
+        tagBody.add("names", names);
+        tagBody.addProperty("category", category);
+
+        try {
+            SzurubooruRequests.tagCreate(this.url, basicAuth, tagBody);
+        } catch(InstanceAlreadyExistsException e){
+            Logger.getLogger(this.getClassName()).warning("Tag already exists: "+e.getMessage());
+        }
+    }
+
+    public void tagCategoryShow(String type) throws IOException, NoSuchElementException {
+        String name = SzurubooruRequests.tagCategoryShow(url, type).get("name").getAsString();
+
+        if(name.equals("TagCategoryNotFoundError")){
+            throw new NoSuchElementException("TagCategoryNotFoundError");
+        }
+    }
+
+    public void tagCategoryCreate(String type) throws IOException {
+        SzurubooruRequests.tagCategoryCreate(url, basicAuth, type);
+    }
+
+    public void createAllTagCategories() throws IOException{
+        List<String> cats = Arrays.asList(TagType.META, TagType.ARTIST, TagType.CHARACTER, TagType.COPYRIGHT);
+        for(String cat: cats){
+            try {
+                tagCategoryShow(cat);
+            } catch(NoSuchElementException e) {
+                tagCategoryCreate(cat);
+            }
+        }
     }
 
     @Override

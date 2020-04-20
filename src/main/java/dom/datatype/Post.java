@@ -1,10 +1,7 @@
 package dom.datatype;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Post implements Serializable {
 
@@ -71,12 +68,25 @@ public class Post implements Serializable {
     }
 
     public String getTagstring(){
+        return getTagstring(true);
+    }
+
+    public String getTagstring(boolean raw){
         StringBuilder tagstring = new StringBuilder();
         for(String k : tags.keySet()){
-            tagstring.append(getTagstring(k, true));
+            tagstring.append(getTagstring(k, raw));
         }
 
         return tagstring.toString();
+    }
+
+    public List<String> getTagList(){
+        List<String> tl = new ArrayList<>();
+        for(Map.Entry<String, List<String>> e : tags.entrySet()){
+            tl.addAll(e.getValue());
+        }
+
+        return tl;
     }
 
     public String getArtists(){
