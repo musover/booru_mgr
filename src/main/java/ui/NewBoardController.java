@@ -39,7 +39,7 @@ public class NewBoardController {
                 .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
                 .setUrls(ClasspathHelper.forPackage("pers.net"))
                 /* and maybe */
-                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("pers.net"))));
+                .filterInputsBy(new FilterBuilder().includePackage("pers.net")));
         Set<Class<? extends Booru>> classes = r.getSubTypesOf(Booru.class);
 
         List<String> classNames = classes.stream().map(Class::getCanonicalName).collect(Collectors.toList());

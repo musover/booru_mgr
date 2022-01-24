@@ -60,12 +60,15 @@ public abstract class Booru implements Serializable, IBooru {
 
         switch(post.get("rating").getAsString().toLowerCase()){
             case "s":
+            case "safe":
                 result.setRating(Rating.SAFE);
                 break;
             case "q":
+            case "questionable":
                 result.setRating(Rating.QUESTIONABLE);
                 break;
             case "e":
+            case "explicit":
                 result.setRating(Rating.EXPLICIT);
                 break;
             default:

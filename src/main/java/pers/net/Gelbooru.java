@@ -3,6 +3,7 @@ package pers.net;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dom.datatype.TagType;
 import pers.stor.Configuration;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -70,7 +71,7 @@ public class Gelbooru extends Booru {
             throw new MalformedURLException(requestURL.toString());
         }
 
-        post = getJsonObject(requestURL);
+        post = getJsonObject(requestURL, "post");
 
         if(post == null)
             return null;
@@ -83,13 +84,14 @@ public class Gelbooru extends Booru {
         return post;
     }
 
-    private JsonObject getJsonObject(URL requestURL) throws IOException {
+    private JsonObject getJsonObject(URL requestURL, String object) throws IOException {
         JsonObject post;
         URLConnection r = requestURL.openConnection();
         r.setDoInput(true);
         try(BufferedReader br = new BufferedReader(new InputStreamReader(r.getInputStream()))) {
             Gson g = new Gson();
-            JsonArray a = g.fromJson(br, JsonArray.class);
+            JsonObject o = g.fromJson(br, JsonObject.class);
+            JsonArray a = o.getAsJsonArray(object);
             if(!a.isJsonNull())
                 post = a.get(0).getAsJsonObject();
             else
@@ -101,12 +103,13 @@ public class Gelbooru extends Booru {
     private void tagDictGen(JsonObject o){
         Map<String, StringBuilder> attempt = new HashMap<>();
         String tagstring = o.get("tags").getAsString();
-        for(String s : tagstring.split(" ")){
+        for(String s : tagstring.split(" ")) {
             String tagName = StringEscapeUtils.unescapeXml(s);
             String type = getType(tagName);
             String key;
 
-            switch(type.toLowerCase()){
+            switch (type.toLowerCase()) {
+                case "":
                 case "tag":
                     key = "tag_string_general";
                     break;
@@ -114,24 +117,24 @@ public class Gelbooru extends Booru {
                     key = "tag_string_meta";
                     break;
                 default:
-                    key = "tag_string_"+type;
+                    key = "tag_string_" + type;
                     break;
             }
-            if(!key.isEmpty()) {
-                if(!attempt.containsKey(key))
-                    attempt.computeIfAbsent(key, k -> {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(tagName).append(" ");
+            if (!attempt.containsKey(key)) {
+                attempt.computeIfAbsent(key, k -> {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(tagName).append(" ");
 
-                        return sb;
-                     });
-                else
-                    attempt.get(key).append(tagName).append(" ");
+                    return sb;
+                });
+            } else {
+                attempt.get(key).append(tagName).append(" ");
             }
-        }
 
-        for(Map.Entry<String, StringBuilder> k : attempt.entrySet()){
-            o.addProperty(k.getKey(), k.getValue().toString());
+            for (Map.Entry<String, StringBuilder> k : attempt.entrySet()) {
+                o.addProperty(k.getKey(), k.getValue().toString());
+            }
+
         }
 
     }
@@ -142,7 +145,7 @@ public class Gelbooru extends Booru {
         try{
             type = tm.getType(tagName);
             if(type.equals("")){
-                type = tagShow(tagName).get("type").getAsString();
+                type = intToStrTagType(tagShow(tagName).get("type").getAsInt());
                 tm.insertTag(tagName, type);
             }
         } catch(SQLException e){
@@ -171,6 +174,22 @@ public class Gelbooru extends Booru {
             throw new MalformedURLException(requestURL.toString());
         }
 
-        return getJsonObject(requestURL);
+        return getJsonObject(requestURL, "tag");
+    }
+
+    private static String intToStrTagType(int tt){
+        switch(tt){
+            default:
+            case 0:
+                return TagType.GENERAL;
+            case 1:
+                return TagType.ARTIST;
+            case 3:
+                return TagType.COPYRIGHT;
+            case 4:
+                return TagType.CHARACTER;
+            case 5:
+                return TagType.META;
+        }
     }
 }
