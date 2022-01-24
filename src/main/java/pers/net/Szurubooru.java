@@ -27,7 +27,7 @@ public class Szurubooru extends Booru implements IUploadable{
 
     private transient String basicAuth = "";
     private String username;
-    private String token;
+    private String apiKey;
 
     public Szurubooru(){
         //I need this.
@@ -120,7 +120,8 @@ public class Szurubooru extends Booru implements IUploadable{
         JsonObject postBody = new JsonObject();
         JsonArray t = new JsonArray();
         for(String tag: p.getTagList()){
-            t.add(tag);
+            if(!tag.isBlank())
+                t.add(tag);
         }
 
         postBody.add("tags", t);
@@ -197,19 +198,19 @@ public class Szurubooru extends Booru implements IUploadable{
 
     @Override
     public String getApiKey() {
-        return token;
+        return apiKey;
     }
 
     @Override
     public void setApiKey(String apiKey) {
-        this.token = apiKey;
+        this.apiKey = apiKey;
         updateBasicAuth();
     }
 
     @Override
     public void updateBasicAuth() {
-        if(username != null && token != null){
-            this.basicAuth = "Token " + Base64.getUrlEncoder().encodeToString((username+":"+token).getBytes());
+        if(username != null && apiKey != null){
+            this.basicAuth = "Token " + Base64.getUrlEncoder().encodeToString((username+":"+apiKey).getBytes());
         }
     }
 }
